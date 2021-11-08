@@ -1,0 +1,89 @@
+{% extends 'base.html.twig' %}
+{% import _self as form_macros %}
+
+{% block title %}New Recipe{% endblock %}
+
+{% macro printIngredientRow(ingredientForm) %}
+    {{ form_widget(ingredientForm.number) }}
+    {{ form_widget(ingredientForm.type) }}
+    {{ form_widget(ingredientForm.name) }}
+{% endmacro %}
+{% macro printStepRow(stepForm) %}
+    {{ form_widget(stepForm.text) }}
+{% endmacro %}
+
+{% block body %}
+    <h1>New Recipe</h1>
+
+{{ form_start(form) }}
+    {{ form_row(form._token) }}
+    {{ form_row(form.name) }}
+    {{ form_row(form.type) }}
+    {{ form_row(form.image) }}
+    <div>
+        <img id="preview" src="" width=100/>
+    </div>
+    {{ form_label(form.ingredients) }}
+    <ul class="ingredients" data-index="0" data-prototype="{{ form_macros.printIngredientRow(form.ingredients.vars.prototype)|e('html_attr') }}">
+        {% for ingredient in form.ingredients %}
+        {% endfor %}
+    </ul>
+    <button type="button" id="add_ing_link" data-collection-holder-class="ingredients">+</button>
+
+    {{ form_label(form.steps) }}
+    <ol class="steps" data-index="0" data-prototype="{{ form_macros.printStepRow(form.steps.vars.prototype)|e('html_attr') }}">
+        {% for step in form.steps %}
+        {% endfor %}
+    </ol>
+    <button type="button" id="add_step_link" data-collection-holder-class="steps">+</button>
+
+    <button type="submit">Save</button>
+{{ form_end(form, {render_rest: false}) }}
+{% endblock %}
+
+{% block js %}
+document.addEventListener("DOMContentLoaded", function() { 
+    recipe_image = document.getElementById("recipe_image")
+    recipe_image.onchange = evt => {
+        const [file] = recipe_image.files
+        if (file) {
+            document.getElementById("preview").src = URL.createObjectURL(file)
+        }
+}
+    const addIngLink = document.getElementById("add_ing_link")
+    const addStepLink = document.getElementById("add_step_link")
+
+    document.querySelector('ul.ingredients').appendChild(addIngLink)
+    document.querySelector('ol.steps').appendChild(addStepLink)
+
+    const addFormToCollection = (e) => {
+    const collectionHolder = document.querySelector('.' + e.currentTarget.dataset.collectionHolderClass);
+
+    const item = document.createElement('li');
+    item.innerHTML = collectionHolder.dataset.prototype
+        .replace(
+        /__name__/g,
+        collectionHolder.dataset.index
+        );
+    collectionHolder.dataset.index++;
+    collectionHolder.appendChild(item);
+    addFormDeleteLink(item);
+    }
+
+    addIngLink.addEventListener("click", addFormToCollection)
+    addStepLink.addEventListener("click", addFormToCollection)
+
+    const addFormDeleteLink = (formLi) => {
+        const removeFormButton = document.createElement('button')
+        removeFormButton.classList
+        removeFormButton.innerText = 'x'
+
+        formLi.append(removeFormButton);
+
+        removeFormButton.addEventListener('click', (e) => {
+            e.preventDefault()
+            formLi.remove();
+        });
+    }
+});
+{% endblock %}

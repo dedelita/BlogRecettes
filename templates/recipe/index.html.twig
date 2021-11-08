@@ -1,0 +1,20 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mes recettes{% endblock %}
+
+{% block body %}
+{% for recipe in recipes %}
+    <div class="card" style="width: 18rem;">
+        {% if recipe.image %}
+            <img src="{{ asset('images/' ~ recipe.image) }}" class="card-img-top" alt="image de la recette {{ recipe.name }}">
+        {% else %}
+            <img src="{{ asset('build/images/' ~ recipe.type ~ '.png') }}" width="50" class="card-img-top" alt="{{ recipe.type }}">
+        {% endif %}
+        <div class="card-body">
+            <h5 class="card-title">{{ recipe.name }}</h5>
+            <p class="card-text"></p>
+            <a href="{{ path('recipe', {id: recipe.id}) }}" class="btn btn-primary">Go somewhere</a>
+        </div>
+    </div>
+{% endfor %}
+{% endblock %}
