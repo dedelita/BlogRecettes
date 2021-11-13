@@ -41,6 +41,7 @@ class IngredientType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => Ingredient::class,
+            'attr' => ['class' => 'form-inline']
         ]);
     }
 }

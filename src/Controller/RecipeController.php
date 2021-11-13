@@ -19,17 +19,27 @@ class RecipeController extends AbstractController
      * @Route("/", name="index")
      */
     public function index(Request $request, RecipeRepository $recipeRepository) {
+        $types = ["entree", "plat", "dessert", "apero", "gouter"];
         return $this->render("recipe/index.html.twig", [
+            "types" => $types,
             "recipes" => $recipeRepository->findAll()
         ]);
     }
 
     /**
-     * @Route("/recipe/add", name="add_recipe")
+     * @Route("/admin", name="admin_index")
+     */
+    public function adminIndex(Request $request)
+    {
+        return $this->redirectToRoute('add_recipe');
+    }
+    /**
+     * @Route("/admin/recipe/add", name="add_recipe")
      */
     public function add(Request $request, RecipeRepository $recipeRepository,
         IngredientRepository $ingredientRepository, StepRepository $stepRepository): Response
     {
+        $types = ["entree", "plat", "dessert", "apero", "gouter"];  
         $recipe = new Recipe();
         $form = $this->createForm(RecipeType::class, $recipe);
 
@@ -56,6 +66,7 @@ class RecipeController extends AbstractController
         }
 
         return $this->render('recipe/add.html.twig', [
+            "types" => $types,
             'form' => $form->createView()
         ]);
     }
@@ -66,6 +77,7 @@ class RecipeController extends AbstractController
     public function show(Request $request, RecipeRepository $recipeRepository,
         IngredientRepository $ingredientRepository, StepRepository $stepRepository): Response
     {
+        $types = ["entree", "plat", "dessert", "apero", "gouter"];
         $recipe = $recipeRepository->find($request->get("id"));
         $ingredients = $ingredientRepository->findByRecipe($recipe);
         foreach ($ingredients as $ingredient) {
@@ -76,6 +88,7 @@ class RecipeController extends AbstractController
             $recipe->addStep($step);
         }
         return $this->render('recipe/show.html.twig', [
+            "types" => $types,
             'recipe' => $recipe
         ]);
     } 
@@ -96,5 +109,22 @@ class RecipeController extends AbstractController
         $recipeRepository->delete($recipe);
 
         return $this->redirectToRoute('index');
+    }
+
+
+    /**
+     * @Route("/recipes/{type}", name="list_type")
+     */
+    public function listType(Request $request, RecipeRepository $recipeRepository)
+    {
+        $types = ["entree", "plat", "dessert", "apero", "gouter"];
+        $type = $request->get("type");
+        $recipes = $recipeRepository->findByType($type);
+
+        return $this->render('recipe/list_type.html.twig', [
+            "types" => $types,
+            "type" => $type,
+            "recipes" => $recipes
+        ]);
     }
 }

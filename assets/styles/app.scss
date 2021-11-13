@@ -1,5 +1,47 @@
 @import "~bootstrap/scss/bootstrap";
 
+@include box-shadow($btn-box-shadow);
 body {
-    background-color: lightgray;
+    background-color: lavenderblush;
+}
+
+.navbar.sticky-top {
+    margin-bottom: 5px;
+}
+.heading {
+    margin: 0;
+    height: 75px;
+}
+.card {
+    margin-top: 10px;
+    border-top-left-radius: 1em;
+    border-top-right-radius: 1em;
+    box-shadow: 0 5px 10px rgba(0,0,0,.2);
+}
+
+.card-body {
+    padding: 0.5rem;
+    padding-bottom: 0;
+}
+
+.recipe {
+    position: relative;
+    top: 0;
+    left: 0;
+}
+.type {
+    position: absolute;
+    top: -10px;
+    left: -10px;
+}
+.image {
+    position: relative;
+}
+
+.show.steps {
+    margin-left: 15px;
+    padding: 15px 30px;
+    width: 80%;
+    border: 1px solid lightgrey;
+    background-color: white;
 }

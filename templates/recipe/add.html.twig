@@ -4,12 +4,14 @@
 {% block title %}New Recipe{% endblock %}
 
 {% macro printIngredientRow(ingredientForm) %}
-    {{ form_widget(ingredientForm.number) }}
-    {{ form_widget(ingredientForm.type) }}
-    {{ form_widget(ingredientForm.name) }}
+    <div class="col-1 p-0">{{ form_widget(ingredientForm.number) }}</div>
+    <div class="col-2 p-0">{{ form_widget(ingredientForm.type) }}</div>
+    <div class="col-3 p-0">{{ form_widget(ingredientForm.name) }}</div>
+    <div class="col-1 p-0" id="remove{{ingredientForm.vars.name}}"></div>
 {% endmacro %}
 {% macro printStepRow(stepForm) %}
-    {{ form_widget(stepForm.text) }}
+    <div class="col p-0">{{ form_widget(stepForm.text) }}</div>
+    <div class="col-1 p-0" id="remove{{stepForm.vars.name}}"></div>
 {% endmacro %}
 
 {% block body %}
@@ -23,21 +25,29 @@
     <div>
         <img id="preview" src="" width=100/>
     </div>
-    {{ form_label(form.ingredients) }}
+    <div class="heading row">
+        <h3 class="col-4">{{ form_label(form.ingredients) }}</h3>
+        <div class="col-1">
+            <button type="button" class="btn btn-light shadow" id="add_ing_link" data-collection-holder-class="ingredients">+</button>
+        </div>
+    </div>
     <ul class="ingredients" data-index="0" data-prototype="{{ form_macros.printIngredientRow(form.ingredients.vars.prototype)|e('html_attr') }}">
         {% for ingredient in form.ingredients %}
         {% endfor %}
     </ul>
-    <button type="button" id="add_ing_link" data-collection-holder-class="ingredients">+</button>
 
-    {{ form_label(form.steps) }}
+    <div class="heading row">
+        <h3 class="col-4">{{ form_label(form.steps) }}</h3>
+        <div class="col-1">
+            <button type="button" class="btn btn-light shadow" id="add_step_link" data-collection-holder-class="steps">+</button>
+        </div>
+    </div>
     <ol class="steps" data-index="0" data-prototype="{{ form_macros.printStepRow(form.steps.vars.prototype)|e('html_attr') }}">
         {% for step in form.steps %}
         {% endfor %}
     </ol>
-    <button type="button" id="add_step_link" data-collection-holder-class="steps">+</button>
-
-    <button type="submit">Save</button>
+    
+    <button type="submit" class="btn btn-light shadow">Save</button>
 {{ form_end(form, {render_rest: false}) }}
 {% endblock %}
 
@@ -53,36 +63,40 @@ document.addEventListener("DOMContentLoaded", function() {
     const addIngLink = document.getElementById("add_ing_link")
     const addStepLink = document.getElementById("add_step_link")
 
-    document.querySelector('ul.ingredients').appendChild(addIngLink)
-    document.querySelector('ol.steps').appendChild(addStepLink)
+   // document.querySelector('ul.ingredients').appendChild(addIngLink)
+   // document.querySelector('ol.steps').appendChild(addStepLink)
 
     const addFormToCollection = (e) => {
     const collectionHolder = document.querySelector('.' + e.currentTarget.dataset.collectionHolderClass);
 
     const item = document.createElement('li');
+    item.classList.add("row")
+    item.classList.add("align-items-center")
     item.innerHTML = collectionHolder.dataset.prototype
         .replace(
         /__name__/g,
         collectionHolder.dataset.index
         );
-    collectionHolder.dataset.index++;
+    const id = collectionHolder.dataset.index++;
     collectionHolder.appendChild(item);
-    addFormDeleteLink(item);
+    addFormDeleteLink(document.getElementById("remove" + id));
     }
 
     addIngLink.addEventListener("click", addFormToCollection)
     addStepLink.addEventListener("click", addFormToCollection)
 
-    const addFormDeleteLink = (formLi) => {
+    const addFormDeleteLink = (divButton) => {
         const removeFormButton = document.createElement('button')
-        removeFormButton.classList
+        removeFormButton.classList.add("btn")
+        removeFormButton.classList.add("btn-danger")
+        removeFormButton.classList.add("col")
         removeFormButton.innerText = 'x'
 
-        formLi.append(removeFormButton);
+        divButton.append(removeFormButton);
 
         removeFormButton.addEventListener('click', (e) => {
             e.preventDefault()
-            formLi.remove();
+            divButton.parentElement.remove();
         });
     }
 });

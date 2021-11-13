@@ -3,18 +3,26 @@
 {% block title %}Mes recettes{% endblock %}
 
 {% block body %}
+<div class="row row-cols-1 row-cols-3 g-4">
 {% for recipe in recipes %}
-    <div class="card" style="width: 18rem;">
+<div class="col">
+    <div class="card">
         {% if recipe.image %}
-            <img src="{{ asset('images/' ~ recipe.image) }}" class="card-img-top" alt="image de la recette {{ recipe.name }}">
+            <a href="{{ path('recipe', {id: recipe.id}) }}" class="recipe">
+                <img src="{{ asset('images/' ~ recipe.image) }}" class="card-img-top image" 
+                    style="width: 100%;height: 23vw;object-fit: cover;" 
+                    alt="image de la recette {{ recipe.name }}" title="i{{ recipe.name }}">
+                <img class="type" src="{{ asset('build/images/' ~ recipe.type ~ '.png') }}" alt="{{ recipe.type }}" title="{{recipe.type}}" />
+            </a> 
         {% else %}
-            <img src="{{ asset('build/images/' ~ recipe.type ~ '.png') }}" width="50" class="card-img-top" alt="{{ recipe.type }}">
+            <img src="{{ asset('build/images/' ~ recipe.type ~ '32.png') }}" width="50" class="card-img-top" alt="{{ recipe.type }}">
         {% endif %}
-        <div class="card-body">
+    <div class="card-body">
             <h5 class="card-title">{{ recipe.name }}</h5>
-            <p class="card-text"></p>
-            <a href="{{ path('recipe', {id: recipe.id}) }}" class="btn btn-primary">Go somewhere</a>
         </div>
+        
     </div>
+</div>
 {% endfor %}
+</div>
 {% endblock %}

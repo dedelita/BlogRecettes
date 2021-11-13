@@ -3,26 +3,31 @@
 {% block title %}{{ recipe.name }}{% endblock %}
 
 {% block body %}
-<h1>{{ recipe.name }}</h1>
-<img src="{{ asset("images/" ~ recipe.image) }}" alt="image de la recette {{ recipe.name }}" width="300"/>
+<div class="title text-center">
+    <h1>{{ recipe.name }}</h1>
+    <img src="{{ asset("images/" ~ recipe.image) }}" alt="image de la recette {{ recipe.name }}" width="300"/>
+</div>
+<div>
+    <h3>Les ingrédients</h3>
+    <ul class="show ingredients">
+    {% for ing in recipe.ingredients %}
+        {% set char = ing.name|slice(0,1) %}
 
-<ul>
-{% for ing in recipe.ingredients %}
-    {% set char = ing.name|slice(0,1) %}
-
-    {% if ing.type is not null and (char == "a" or char == "e" or char =="i" or char == "o" or char == "u" or char == "y") %}
-        {% set d = "d\'" %}
-    {% elseif ing.type is null %}
-        {% set d = null %}
-    {% else %}
-        {% set d = "de" %}
-    {% endif %}
-        <li>{{ ing.number }} {{ ing.type }} {{ d }} {{ ing.name }}</li>
-{% endfor %}
-</ul>
-<ol>
-{% for step in recipe.steps %}
-    <li><p>{{ step.text }}</p></li>
-{% endfor %}
-</ol>
+        {% if ing.type is not null and (char == "a" or char == "e" or char =="i" or char == "o" or char == "u" or char == "y") %}
+            {% set d = "d\'" %}
+        {% elseif ing.type is null %}
+            {% set d = null %}
+        {% else %}
+            {% set d = "de" %}
+        {% endif %}
+            <li>{{ ing.number }} {{ ing.type }} {{ d }} {{ ing.name }}</li>
+    {% endfor %}
+    </ul>
+    <h3>Les étapes</h3>
+    <ol class="show steps">
+    {% for step in recipe.steps %}
+        <li><p>{{ step.text }}</p></li>
+    {% endfor %}
+    </ol>
+</div>
 {% endblock %}
