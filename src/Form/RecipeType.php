@@ -18,7 +18,12 @@ class RecipeType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('name', TextType::class, ["label" => false])
+            ->add('name', TextType::class, [
+                "label" => false,
+                "attr" => [
+                    "placeholder" => "Titre",
+                    "class" => "w-50"
+                ]])
             ->add('type', ChoiceType::class, [
                 "label" => false,
                 'choices' => [
@@ -27,22 +32,18 @@ class RecipeType extends AbstractType
                     'dessert' => "dessert",
                     'apéro' => "apero",
                     'goûter' => "gouter"
+                ],
+                "attr" => [
+                    "class" => "w-25"
                 ]
             ])
             ->add('image', FileType::class, [
                 "label" => false,
                 'mapped' => false,
                 'required' => false,
-                'constraints' => [
-                    new File([
-                        'maxSize' => '5M',
-                        'mimeTypes' => [
-                            'image/png',
-                            'image/jpeg',
-                            'image/jpg',
-                        ],
-                        'mimeTypesMessage' => "Merci d'ajouter une image png/jpeg",
-                    ])
+                'attr' => [
+                    'accept' => 'image/jpeg',
+                    'accept' => 'image/png',
                 ],
             ])
             ->add('ingredients', CollectionType::class, [
@@ -69,6 +70,9 @@ class RecipeType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => Recipe::class,
+            'attr' => [
+                'class' => 'p-5'
+            ]
         ]);
     }
 }

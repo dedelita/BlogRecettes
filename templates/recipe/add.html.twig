@@ -4,42 +4,58 @@
 {% block title %}New Recipe{% endblock %}
 
 {% macro printIngredientRow(ingredientForm) %}
-    <div class="col-1 p-0">{{ form_widget(ingredientForm.number) }}</div>
+    <div class="col-2 p-0">{{ form_widget(ingredientForm.number) }}</div>
     <div class="col-2 p-0">{{ form_widget(ingredientForm.type) }}</div>
     <div class="col-3 p-0">{{ form_widget(ingredientForm.name) }}</div>
-    <div class="col-1 p-0" id="remove{{ingredientForm.vars.name}}"></div>
+        <button type="button" id="removeIng{{ingredientForm.vars.name}}"
+        class="col-1 p-0 btn btn-danger">
+            <i class='bi bi-trash-fill'></i>
+        </button>
 {% endmacro %}
 {% macro printStepRow(stepForm) %}
     <div class="col p-0">{{ form_widget(stepForm.text) }}</div>
-    <div class="col-1 p-0" id="remove{{stepForm.vars.name}}"></div>
+    <div class="col-1 p-0" id="removeStep{{stepForm.vars.name}}"></div>
 {% endmacro %}
 
 {% block body %}
-    <h1>New Recipe</h1>
+    <h1 class="text-center">Nouvelle recette</h1>
 
 {{ form_start(form) }}
     {{ form_row(form._token) }}
-    {{ form_row(form.name) }}
-    {{ form_row(form.type) }}
-    {{ form_row(form.image) }}
-    <div>
-        <img id="preview" src="" width=100/>
-    </div>
-    <div class="heading row">
-        <h3 class="col-4">{{ form_label(form.ingredients) }}</h3>
+    <div class="not-displayed">{{ form_row(form.image) }}</div>
+    <div class="row">
         <div class="col-1">
-            <button type="button" class="btn btn-light shadow" id="add_ing_link" data-collection-holder-class="ingredients">+</button>
+            <button type="button" class="btn btn-light btn-lg shadow" 
+                onclick="document.getElementById('recipe_image').click()"
+                title="Ajouter une image correspondant à la recette">
+                <i class="bi bi-image"></i>
+            </button>
+            <img id="preview" src="" width="100"/>
+        </div>
+        <div class="col pt-1">
+            {{ form_row(form.name) }}
+        </div>
+    </div>
+    {{ form_row(form.type) }}
+    
+    <div class="row">
+        <div class="heading text-right">
+            <h3>{{ form_label(form.ingredients) }}</h3>
+            <button type="button" class="btn btn-light shadow rounded-circle ms-3" id="add_ing_link" data-collection-holder-class="ingredients">
+                +
+            </button>
         </div>
     </div>
     <ul class="ingredients" data-index="0" data-prototype="{{ form_macros.printIngredientRow(form.ingredients.vars.prototype)|e('html_attr') }}">
         {% for ingredient in form.ingredients %}
         {% endfor %}
     </ul>
-
-    <div class="heading row">
-        <h3 class="col-4">{{ form_label(form.steps) }}</h3>
-        <div class="col-1">
-            <button type="button" class="btn btn-light shadow" id="add_step_link" data-collection-holder-class="steps">+</button>
+    <div class="row">
+        <div class="heading col text-right">
+            <h3>{{ form_label(form.steps) }}</h3>
+            <button type="button" class="btn btn-light shadow rounded-circle ms-3" id="add_step_link" data-collection-holder-class="steps">
+                +
+            </button>
         </div>
     </div>
     <ol class="steps" data-index="0" data-prototype="{{ form_macros.printStepRow(form.steps.vars.prototype)|e('html_attr') }}">
@@ -52,7 +68,7 @@
 {% endblock %}
 
 {% block js %}
-document.addEventListener("DOMContentLoaded", function() { 
+document.addEventListener("DOMContentLoaded", function() {
     recipe_image = document.getElementById("recipe_image")
     recipe_image.onchange = evt => {
         const [file] = recipe_image.files
@@ -60,44 +76,38 @@ document.addEventListener("DOMContentLoaded", function() {
             document.getElementById("preview").src = URL.createObjectURL(file)
         }
 }
+
     const addIngLink = document.getElementById("add_ing_link")
     const addStepLink = document.getElementById("add_step_link")
 
-   // document.querySelector('ul.ingredients').appendChild(addIngLink)
-   // document.querySelector('ol.steps').appendChild(addStepLink)
+    const addFormToCollection = (e, type) => {
+        const collectionHolder = document.querySelector('.' + e.currentTarget.dataset.collectionHolderClass);
 
-    const addFormToCollection = (e) => {
-    const collectionHolder = document.querySelector('.' + e.currentTarget.dataset.collectionHolderClass);
-
-    const item = document.createElement('li');
-    item.classList.add("row")
-    item.classList.add("align-items-center")
-    item.innerHTML = collectionHolder.dataset.prototype
-        .replace(
-        /__name__/g,
-        collectionHolder.dataset.index
-        );
-    const id = collectionHolder.dataset.index++;
-    collectionHolder.appendChild(item);
-    addFormDeleteLink(document.getElementById("remove" + id));
-    }
-
-    addIngLink.addEventListener("click", addFormToCollection)
-    addStepLink.addEventListener("click", addFormToCollection)
-
-    const addFormDeleteLink = (divButton) => {
-        const removeFormButton = document.createElement('button')
-        removeFormButton.classList.add("btn")
-        removeFormButton.classList.add("btn-danger")
-        removeFormButton.classList.add("col")
-        removeFormButton.innerText = 'x'
-
-        divButton.append(removeFormButton);
-
-        removeFormButton.addEventListener('click', (e) => {
+        const id = collectionHolder.dataset.index;
+        const item = document.createElement('li');
+        item.id = type + id;
+        item.classList.add("row")
+        item.classList.add("align-items-center")
+        item.innerHTML = collectionHolder.dataset.prototype
+            .replace(
+            /__name__/g,
+            collectionHolder.dataset.index
+            );
+        collectionHolder.appendChild(item);
+        const btnRemove = document.getElementById("remove" + type + id)
+        console.log("remove" + type + id)
+        console.log(btnRemove)
+        btnRemove.addEventListener('click', (e) => {
             e.preventDefault()
-            divButton.parentElement.remove();
+            document.getElementById(type + id).remove();
         });
     }
-});
+
+    addIngLink.addEventListener("click", function(e) {
+        return addFormToCollection(e,"Ing")
+    }, false)
+    addStepLink.addEventListener("click", function(e) {
+        return addFormToCollection(e, "Step")
+    }, false)
+})
 {% endblock %}
