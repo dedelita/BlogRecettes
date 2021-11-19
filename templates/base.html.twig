@@ -17,33 +17,28 @@
     </head>
     <body>
         <header class="">
-        {# <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <img src="{{ asset('build/images/header.jpg') }}" class="img-responsive cover"></img>
+        </header>
+        {% if app.request.attributes.get('_route') != "app_login" and not app.user %}
+        <nav class="navbar navbar-expand-lg navbar-light bg-light sticky-top">
             <div class="container-fluid">
                 <a class="navbar-brand" href="#">Navbar</a>
-            </div>
-        </nav> #}
-            <img src="{{ asset('build/images/header.jpg') }}" class="img-responsive" style="object-fit: cover;
-    height: 15vw;width: 100%;" ></img>
-        </header>
-        {% if app.request.attributes.get('_route') != "app_login"
-            and (app.user and "ROLE_ADMIN" not in app.user.roles) %}
-        
-        <nav class="navbar sticky-top navbar-expand-lg navbar-light bg-light">
-            <div class="container-fluid">
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
+                <span class="navbar-toggler-icon"></span>
                 </button>
-                <ul class="navbar-nav collapse mb-2 mb-lg-0">
-                {% for type in types %}
-                    <li class="nav-item"><a class="nav-link" href="{{ path('list_type', {type:type}) }}">{{type|capitalize}}</a></li>
-                {% endfor %}
-                </ul>
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav mb-2 mb-lg-0">
+                        {% for type in types %}
+                            <li class="nav-item"><a class="nav-link" href="{{ path('list_type', {type:type.id}) }}">{{type.name|capitalize}}</a></li>
+                        {% endfor %}
+                    </ul>
+                </div>
             </div>
-        </nav>
+        </nav> 
         {% endif %}
         {% if app.request.attributes.get('_route') != "app_login"
             and (app.user and "ROLE_ADMIN" in app.user.roles) %}
-        {% include "admin_menu.html.twig" %}
+        {% include "admin/menu.html.twig" %}
         {% endif %}
         <div class="{% if app.request.attributes.get('_route') != "app_login"
             and (app.user and "ROLE_ADMIN" in app.user.roles) %}with-sb{% endif %}">

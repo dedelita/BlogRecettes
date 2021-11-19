@@ -18,7 +18,6 @@ class IngredientType extends AbstractType
                 "label"=> false,
                 "attr" => [
                     "min" => 1,
-                    "value" => 1
                 ]
             ])
             ->add('type', TextType::class, [

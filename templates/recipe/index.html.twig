@@ -9,8 +9,8 @@
     <div class="card">
         {% if recipe.image %}
             <a href="{{ path('recipe', {id: recipe.id}) }}" class="recipe">
-                <img src="{{ asset('images/' ~ recipe.image) }}" class="card-image" 
-                    alt="image de la recette {{ recipe.name }}" title="i{{ recipe.name }}">
+                <img src="{{ asset('images/' ~ recipe.image) }}" class="card-image cover" 
+                    alt="image de la recette {{ recipe.name }}" title="{{ recipe.name }}">
                 <img class="type" src="{{ asset('build/images/' ~ recipe.type ~ '.png') }}" alt="{{ recipe.type }}" title="{{recipe.type}}" />
             </a> 
         {% else %}

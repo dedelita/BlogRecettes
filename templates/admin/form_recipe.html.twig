@@ -8,17 +8,20 @@
     <div class="col-2 p-0">{{ form_widget(ingredientForm.type) }}</div>
     <div class="col-3 p-0">{{ form_widget(ingredientForm.name) }}</div>
         <button type="button" id="removeIng{{ingredientForm.vars.name}}"
-        class="col-1 p-0 btn btn-danger">
+        class="col-1 p-0 btn btn-danger btn-delete">
             <i class='bi bi-trash-fill'></i>
         </button>
 {% endmacro %}
 {% macro printStepRow(stepForm) %}
     <div class="col p-0">{{ form_widget(stepForm.text) }}</div>
-    <div class="col-1 p-0" id="removeStep{{stepForm.vars.name}}"></div>
+    <button type="button" id="removeStep{{stepForm.vars.name}}"
+    class="col-1 p-0 btn btn-danger btn-delete">
+        <i class='bi bi-trash-fill'></i>
+    </button>
 {% endmacro %}
 
 {% block body %}
-    <h1 class="text-center">Nouvelle recette</h1>
+    <h1 class="text-center">{{ page_title }}</h1>
 
 {{ form_start(form) }}
     {{ form_row(form._token) }}
@@ -30,7 +33,7 @@
                 title="Ajouter une image correspondant à la recette">
                 <i class="bi bi-image"></i>
             </button>
-            <img id="preview" src="" width="100"/>
+            <img id="preview" class="not-displayed" src="{{ asset('images/' ~ form.vars.value.image) }}" width="100"/>
         </div>
         <div class="col pt-1">
             {{ form_row(form.name) }}
@@ -46,8 +49,11 @@
             </button>
         </div>
     </div>
-    <ul class="ingredients" data-index="0" data-prototype="{{ form_macros.printIngredientRow(form.ingredients.vars.prototype)|e('html_attr') }}">
+    <ul class="ingredients" data-index="{{form.ingredients|length}}" data-prototype="{{ form_macros.printIngredientRow(form.ingredients.vars.prototype)|e('html_attr') }}">
         {% for ingredient in form.ingredients %}
+        <li id="Ing{{loop.index0}}" class="row align-items-center">
+            {{ form_macros.printIngredientRow(ingredient)}}
+        </li>
         {% endfor %}
     </ul>
     <div class="row">
@@ -58,8 +64,11 @@
             </button>
         </div>
     </div>
-    <ol class="steps" data-index="0" data-prototype="{{ form_macros.printStepRow(form.steps.vars.prototype)|e('html_attr') }}">
+    <ol class="steps" data-index="{{form.steps|length}}" data-prototype="{{ form_macros.printStepRow(form.steps.vars.prototype)|e('html_attr') }}">
         {% for step in form.steps %}
+        <li id="Step{{loop.index0}}" class="row align-items-center">
+            {{ form_macros.printStepRow(step)}}
+        </li>
         {% endfor %}
     </ol>
     
@@ -73,9 +82,25 @@ document.addEventListener("DOMContentLoaded", function() {
     recipe_image.onchange = evt => {
         const [file] = recipe_image.files
         if (file) {
-            document.getElementById("preview").src = URL.createObjectURL(file)
+            preview = document.getElementById("preview");
+            preview.classList.remove("not-displayed");
+            preview.src = URL.createObjectURL(file)
         }
-}
+    }
+
+    for(let i = 0; i < document.querySelector("ul.ingredients").getElementsByTagName("li").length; i++) {
+        document.getElementById("removeIng" + i).addEventListener('click', (e) => {
+            e.preventDefault()
+            document.getElementById("Ing" + i).remove();
+        });
+    }
+
+    for(let i = 0; i < document.querySelector("ol.steps").getElementsByTagName("li").length; i++) {
+        document.getElementById("removeStep" + i).addEventListener('click', (e) => {
+            e.preventDefault()
+            document.getElementById("Step" + i).remove();
+        });
+    }
 
     const addIngLink = document.getElementById("add_ing_link")
     const addStepLink = document.getElementById("add_step_link")
@@ -95,8 +120,7 @@ document.addEventListener("DOMContentLoaded", function() {
             );
         collectionHolder.appendChild(item);
         const btnRemove = document.getElementById("remove" + type + id)
-        console.log("remove" + type + id)
-        console.log(btnRemove)
+        
         btnRemove.addEventListener('click', (e) => {
             e.preventDefault()
             document.getElementById(type + id).remove();

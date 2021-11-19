@@ -42,8 +42,7 @@ class RecipeType extends AbstractType
                 'mapped' => false,
                 'required' => false,
                 'attr' => [
-                    'accept' => 'image/jpeg',
-                    'accept' => 'image/png',
+                    'accept' => 'image/jpeg,image/png',
                 ],
             ])
             ->add('ingredients', CollectionType::class, [

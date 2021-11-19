@@ -13,9 +13,8 @@
             </h5>
         </div>
         {% if recipe.image %}
-            <a href="{{ path('recipe', {id: recipe.id}) }}"><img src="{{ asset('images/' ~ recipe.image) }}" class="card-img-top" 
-                style="width: 100%;height: 23vw;object-fit: cover;" 
-                alt="image de la recette {{ recipe.name }}"></a>
+            <a href="{{ path('recipe', {id: recipe.id}) }}"><img src="{{ asset('images/' ~ recipe.image) }}" class="card-img-top card-image" 
+            alt="image de la recette {{ recipe.name }}"></a>
         {% else %}
             <img src="{{ asset('build/images/' ~ recipe.type ~ '32.png') }}" width="50" class="card-img-top" alt="{{ recipe.type }}">
         {% endif %}

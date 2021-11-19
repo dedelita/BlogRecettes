@@ -27,12 +27,12 @@ class Recipe
     private $name;
 
     /**
-     * @ORM\OneToMany(targetEntity=Ingredient::class, mappedBy="recipe")
+     * @ORM\OneToMany(targetEntity=Ingredient::class, mappedBy="recipe", cascade={"persist", "remove"})
      */
     private $ingredients;
 
     /**
-     * @ORM\OneToMany(targetEntity=Step::class, mappedBy="recipe")
+     * @ORM\OneToMany(targetEntity=Step::class, mappedBy="recipe", cascade={"persist", "remove"})
      */
     private $steps;
 
