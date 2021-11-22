@@ -1,7 +1,7 @@
 {% extends 'base.html.twig' %}
 {% import _self as form_macros %}
 
-{% block title %}New Recipe{% endblock %}
+{% block title %}Recette{% endblock %}
 
 {% macro printIngredientRow(ingredientForm) %}
     <div class="col-2 p-0">{{ form_widget(ingredientForm.number) }}</div>
@@ -21,33 +21,43 @@
 {% endmacro %}
 
 {% block body %}
-    <h1 class="text-center">{{ page_title }}</h1>
+    <h1 class="text-center" id="page-title" data-page-title={{ page_title }}>{{ page_title }} recette</h1>
 
 {{ form_start(form) }}
     {{ form_row(form._token) }}
     <div class="not-displayed">{{ form_row(form.image) }}</div>
-    <div class="row">
+    <div class="row align-items-center mb-3">
         <div class="col-1">
             <button type="button" class="btn btn-light btn-lg shadow" 
                 onclick="document.getElementById('recipe_image').click()"
                 title="Ajouter une image correspondant à la recette">
                 <i class="bi bi-image"></i>
             </button>
-            <img id="preview" class="not-displayed" src="{{ asset('images/' ~ form.vars.value.image) }}" width="100"/>
         </div>
-        <div class="col pt-1">
+        <div class="col-6">
             {{ form_row(form.name) }}
         </div>
-    </div>
-    {{ form_row(form.type) }}
     
-    <div class="row">
-        <div class="heading text-right">
-            <h3>{{ form_label(form.ingredients) }}</h3>
-            <button type="button" class="btn btn-light shadow rounded-circle ms-3" id="add_ing_link" data-collection-holder-class="ingredients">
-                +
-            </button>
+        <div class="col-5 text-center">
+            <img id="preview" class="{% if not form.vars.value.image %}not-displayed{% endif %}" src="{{ asset('images/' ~ form.vars.value.image) }}" width="200"/>
         </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            {{ form_row(form.type) }}
+        </div>
+        <div class="col">
+            {{ form_row(form.difficulty) }}
+        </div>
+        <div class="col">
+            {{ form_row(form.time) }}
+        </div>
+    </div>
+    <div class="heading text-right">
+        <h3>{{ form_label(form.ingredients) }}</h3>
+        <button type="button" class="btn btn-light shadow rounded-circle ms-3" id="add_ing_link" data-collection-holder-class="ingredients">
+            +
+        </button>
     </div>
     <ul class="ingredients" data-index="{{form.ingredients|length}}" data-prototype="{{ form_macros.printIngredientRow(form.ingredients.vars.prototype)|e('html_attr') }}">
         {% for ingredient in form.ingredients %}
@@ -56,13 +66,11 @@
         </li>
         {% endfor %}
     </ul>
-    <div class="row">
-        <div class="heading col text-right">
-            <h3>{{ form_label(form.steps) }}</h3>
-            <button type="button" class="btn btn-light shadow rounded-circle ms-3" id="add_step_link" data-collection-holder-class="steps">
-                +
-            </button>
-        </div>
+    <div class="heading col text-right">
+        <h3>{{ form_label(form.steps) }}</h3>
+        <button type="button" class="btn btn-light shadow rounded-circle ms-3" id="add_step_link" data-collection-holder-class="steps">
+            +
+        </button>
     </div>
     <ol class="steps" data-index="{{form.steps|length}}" data-prototype="{{ form_macros.printStepRow(form.steps.vars.prototype)|e('html_attr') }}">
         {% for step in form.steps %}
@@ -78,6 +86,7 @@
 
 {% block js %}
 document.addEventListener("DOMContentLoaded", function() {
+    //Affichage de l'apperçu de l'image
     recipe_image = document.getElementById("recipe_image")
     recipe_image.onchange = evt => {
         const [file] = recipe_image.files
@@ -88,23 +97,7 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     }
 
-    for(let i = 0; i < document.querySelector("ul.ingredients").getElementsByTagName("li").length; i++) {
-        document.getElementById("removeIng" + i).addEventListener('click', (e) => {
-            e.preventDefault()
-            document.getElementById("Ing" + i).remove();
-        });
-    }
-
-    for(let i = 0; i < document.querySelector("ol.steps").getElementsByTagName("li").length; i++) {
-        document.getElementById("removeStep" + i).addEventListener('click', (e) => {
-            e.preventDefault()
-            document.getElementById("Step" + i).remove();
-        });
-    }
-
-    const addIngLink = document.getElementById("add_ing_link")
-    const addStepLink = document.getElementById("add_step_link")
-
+    //Ajout d'un élément (ingrédient, étape) à une collection
     const addFormToCollection = (e, type) => {
         const collectionHolder = document.querySelector('.' + e.currentTarget.dataset.collectionHolderClass);
 
@@ -121,17 +114,40 @@ document.addEventListener("DOMContentLoaded", function() {
         collectionHolder.appendChild(item);
         const btnRemove = document.getElementById("remove" + type + id)
         
+        collectionHolder.dataset.index++;
+        
         btnRemove.addEventListener('click', (e) => {
             e.preventDefault()
             document.getElementById(type + id).remove();
         });
     }
 
-    addIngLink.addEventListener("click", function(e) {
+    //Attachement aux boutons d'ajout
+    document.getElementById("add_ing_link").addEventListener("click", function(e) {
         return addFormToCollection(e,"Ing")
     }, false)
-    addStepLink.addEventListener("click", function(e) {
+    document.getElementById("add_step_link").addEventListener("click", function(e) {
         return addFormToCollection(e, "Step")
     }, false)
+
+    //Création d'un élément pour chaque collection si le formulaire est utilisé pour une nouvelle recette
+    console.log(document.getElementById('page-title').dataset.pageTitle)
+    if(document.getElementById('page-title').dataset.pageTitle == "Nouvelle") {
+        document.getElementById("add_ing_link").click();
+        document.getElementById("add_step_link").click();
+    }
+    //Ajout de la suppression d'un élément de sa collection    
+    for(let i = 0; i < document.querySelector("ul.ingredients").getElementsByTagName("li").length; i++) {
+        document.getElementById("removeIng" + i).addEventListener('click', (e) => {
+            e.preventDefault()
+            document.getElementById("Ing" + i).remove();
+        });
+    }
+    for(let i = 0; i < document.querySelector("ol.steps").getElementsByTagName("li").length; i++) {
+        document.getElementById("removeStep" + i).addEventListener('click', (e) => {
+            e.preventDefault()
+            document.getElementById("Step" + i).remove();
+        });
+    }
 })
 {% endblock %}

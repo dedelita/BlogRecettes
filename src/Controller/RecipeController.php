@@ -34,23 +34,27 @@ class RecipeController extends AbstractController
      */
     public function adminIndex(Request $request)
     {
-        return $this->redirectToRoute('add_recipe');
+        return $this->redirectToRoute('admin_recipes');
     }
 
     /**
      * @Route("/admin/recipes", name="admin_recipes")
      * @IsGranted("ROLE_ADMIN")
      */
-    public function adminListRecipes(Request $request, RecipeRepository $recipeRepository)
+    public function adminListRecipes(Request $request, RecipeRepository $recipeRepository,
+        TypeRepository $typeRepository)
     {
         $recipes = $recipeRepository->findAll();
+        foreach ($recipes as $recipe) {
+            $recipe->setType($typeRepository->find($recipe->getType())->getName());
+        }
         return $this->render('admin/list_recipes.html.twig',[
             "recipes" => $recipes
         ]);
     }
 
     /**
-     * @Route("/admin/recipe/add", name="add_recipe")
+     * @Route("/admin/recipe/add", name="admin_add_recipe")
      * @IsGranted("ROLE_ADMIN")
      */
     public function add(Request $request, RecipeRepository $recipeRepository,
@@ -62,10 +66,12 @@ class RecipeController extends AbstractController
         $form->handleRequest($request);
         if($form->isSubmitted() && $form->isValid()) {
             $image = $form['image']->getData();
+            if($image) {
             $imageName = $recipe->getName() . "." . $image->guessExtension();
             $directory = $this->getParameter('images_directory');
             $image->move($directory, $imageName);
-            $recipeRepository->add($recipe->getName(), $recipe->getType(), $imageName);
+            }
+            $recipeRepository->add($recipe->getName(), $recipe->getType(), $recipe->getDifficulty(), $recipe->getTime(), $imageName = null);
             $r = $recipeRepository->findOneByName($recipe->getName());
 
             foreach ($recipe->getIngredients() as $ingredient) {
@@ -79,13 +85,9 @@ class RecipeController extends AbstractController
             }
 
             return $this->redirectToRoute("recipe", ["id" => $r->getId()]);
-        } elseif($form->isSubmitted() && !$form->isValid()) {
-            foreach($form->getErrors() as $error)
-                var_dump($error->getMessage());die;
         }
-
         return $this->render('admin/form_recipe.html.twig', [
-            "page_title" => "Nouvelle recette",
+            "page_title" => "Nouvelle",
             'form' => $form->createView()
         ]);
     }
@@ -120,7 +122,7 @@ class RecipeController extends AbstractController
         }
 
         return $this->render('admin/form_recipe.html.twig',[
-            "page_title" => "Modifier la recette",
+            "page_title" => "Modifier la",
             'form' => $form->createView(),
         ]);
     }
@@ -140,13 +142,14 @@ class RecipeController extends AbstractController
     /**
      * @Route("/recipes/{type}", name="list_type")
      */
-    public function listType(Request $request, RecipeRepository $recipeRepository)
+    public function listType(Request $request, RecipeRepository $recipeRepository,
+        TypeRepository $typeRepository)
     {
         $type = $request->get("type");
         $recipes = $recipeRepository->findByType($type);
 
         return $this->render('recipe/list_type.html.twig', [
-            "types" => $this->getTypes(),
+            "types" => $typeRepository->findAll(),
             "type" => $type,
             "recipes" => $recipes
         ]);
@@ -156,7 +159,8 @@ class RecipeController extends AbstractController
      * @Route("/recipe/{id}", name="recipe")
      */
     public function show(Request $request, RecipeRepository $recipeRepository,
-        IngredientRepository $ingredientRepository, StepRepository $stepRepository): Response
+        IngredientRepository $ingredientRepository, StepRepository $stepRepository,
+            TypeRepository $typeRepository)
     {
         $recipe = $recipeRepository->find($request->get("id"));
         $ingredients = $ingredientRepository->findByRecipe($recipe);
@@ -170,7 +174,7 @@ class RecipeController extends AbstractController
             $recipe->addStep($step);
         }
         return $this->render('recipe/show.html.twig', [
-            "types" => $this->getTypes(),
+            "types" => $typeRepository->findAll(),
             'recipe' => $recipe
         ]);
     }

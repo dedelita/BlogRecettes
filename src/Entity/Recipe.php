@@ -46,6 +46,16 @@ class Recipe
      */
     private $type;
 
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $difficulty;
+
+    /**
+     * @ORM\Column(type="time")
+     */
+    private $time;
+
     public function __construct()
     {
         $this->ingredients = new ArrayCollection();
@@ -149,6 +159,30 @@ class Recipe
     public function setType(string $type): self
     {
         $this->type = $type;
+
+        return $this;
+    }
+
+    public function getDifficulty(): ?string
+    {
+        return $this->difficulty;
+    }
+
+    public function setDifficulty(string $difficulty): self
+    {
+        $this->difficulty = $difficulty;
+
+        return $this;
+    }
+
+    public function getTime(): ?\DateTimeInterface
+    {
+        return $this->time;
+    }
+
+    public function setTime(\DateTimeInterface $time): self
+    {
+        $this->time = $time;
 
         return $this;
     }

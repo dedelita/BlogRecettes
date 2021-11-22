@@ -24,6 +24,10 @@ a {
 .heading > h3 {
     width: fit-content;
 }
+
+.heading > h3 > * {
+    padding: 0;
+}
 .fixed-left {
     bottom: 0;
     width: 215px;
@@ -59,6 +63,10 @@ a {
     padding-bottom: 0;
 }
 
+
+#recipe_name {
+    margin-bottom: -1rem;
+}
 .recipe {
     position: relative;
     top: 0;
