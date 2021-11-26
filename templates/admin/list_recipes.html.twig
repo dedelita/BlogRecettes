@@ -9,27 +9,29 @@
         <div class="col-2">Nombre d'ingrédients</div>
         <div class="col-1">Nombre d'étapes</div>
         <div class="col-1">Difficulté</div>
-        <div class="col-1">Temps</div>
+        <div class="col-1">Temps de prépa.</div>
         <div class="col-2">Actions</div>
     </div>
     <hr>
 {% for recipe in recipes %}
-    <div class="row recipe text-center {% if not loop.first %} mt-2{% endif %}">
+    <div class="row recipe text-center {% if not loop.first %}mt-2{% endif %}">
         <div class="col-2 text-start ps-2">{{ recipe.name }}</div>
-        <div class="col-2"><img id="preview" src="{{ asset('images/' ~ recipe.image) }}" width="100"/></div>
+        <div class="col-2">
+            {% if recipe.image %}
+                <img src="{{ asset('images/' ~ recipe.image) }}" width="100"/>
+            {% endif %}
+        </div>
         <div class="col-1">{{ recipe.type }}</div>
         <div class="col-2">{{ recipe.ingredients|length }}</div>
         <div class="col-1">{{ recipe.steps|length }}</div>
-        <div class="col-1">{{ recipe.difficulty }}</div>
+        <div class="col-1">{{ recipe.difficulty | capitalize }}</div>
         <div class="col-1">
-            {% if recipe.time|date("h") > 0 %}
-                {{ recipe.time | date('G\\h') }}
+            {% if recipe.preparationTime|date("G") > 0 %}
+                {{ recipe.preparationTime | date('G\\h') }}
             {% endif %}
-            {% if recipe.time|date("i") > 0 %}
-                {{ recipe.time|date('i') }}min
+            {% if recipe.preparationTime|date("i") > 0 %}
+                {{ recipe.preparationTime|date('i') }}min
             {% endif %}
-            
-            
         </div>
         <div class="col-2">
             <a class="text-dark me-3" href="{{ path('admin_edit_recipe', {id: recipe.id})}}" 

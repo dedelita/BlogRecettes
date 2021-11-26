@@ -8,6 +8,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
+use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\TimeType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -20,10 +21,11 @@ class RecipeType extends AbstractType
     {
         $builder
             ->add('name', TextType::class, [
-                "label" => false,
-                "attr" => [
-                    "placeholder" => "Titre",
-                ]])
+                'label' => false,
+                'attr' => [
+                    'placeholder' => 'Titre',
+                ]
+            ])
             ->add('type', ChoiceType::class, [
                 'choices' => [
                     'Entrée' => "entree",
@@ -32,29 +34,38 @@ class RecipeType extends AbstractType
                     'Apéro' => "apero",
                     'Goûter' => "gouter"
                 ],
-                "attr" => [
-                    "class" => "w-50"
-                ]
+            ])
+            ->add('nbServings', IntegerType::class, [
+                'label' => 'Personnes'
             ])
             ->add('difficulty', ChoiceType::class, [
-                "label" => "Difficulté",
-                "choices" => [
-                    "Facile" => "facile",
-                    "Intermédiaire" => "intermediaire",
-                    "Difficile" => "difficile"
+                'label' => 'Difficulté',
+                'choices' => [
+                    'Facile' => 'facile',
+                    'Intermédiaire' => 'intermediaire',
+                    'Difficile' => 'difficile'
                 ],
-                "attr" => [
-                    "class" => "w-50"
+            ])
+            ->add('preparation_time', TimeType::class, [
+                'label' => 'Temps de préparation',
+                'label_attr' => [
+                    'class' => 'pt-0'
+                ],
+                'attr' => [
+                    'class' => 'w-75'
                 ]
             ])
-            ->add('time', TimeType::class, [
-                "label" => "Temps de préparation",
-                "attr" => [
-                    "class" => "w-75"
+            ->add('cooking_time', TimeType::class, [
+                'label' => 'Temps de cuisson',
+                'label_attr' => [
+                    'class' => 'pt-0'
+                ],
+                'attr' => [
+                    'class' => 'w-75'
                 ]
             ])
             ->add('image', FileType::class, [
-                "label" => false,
+                'label' => false,
                 'mapped' => false,
                 'required' => false,
                 'attr' => [

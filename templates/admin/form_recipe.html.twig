@@ -4,9 +4,9 @@
 {% block title %}Recette{% endblock %}
 
 {% macro printIngredientRow(ingredientForm) %}
-    <div class="col-2 p-0">{{ form_widget(ingredientForm.number) }}</div>
+    <div class="col-1 p-0">{{ form_widget(ingredientForm.number) }}</div>
     <div class="col-2 p-0">{{ form_widget(ingredientForm.type) }}</div>
-    <div class="col-3 p-0">{{ form_widget(ingredientForm.name) }}</div>
+    <div class="col-4 p-0">{{ form_widget(ingredientForm.name) }}</div>
         <button type="button" id="removeIng{{ingredientForm.vars.name}}"
         class="col-1 p-0 btn btn-danger btn-delete">
             <i class='bi bi-trash-fill'></i>
@@ -43,14 +43,22 @@
         </div>
     </div>
     <div class="row">
-        <div class="col">
+        <div class="col-2 me-4">
             {{ form_row(form.type) }}
         </div>
-        <div class="col">
+        <div class="col-2 me-4">
             {{ form_row(form.difficulty) }}
         </div>
-        <div class="col">
-            {{ form_row(form.time) }}
+        <div class="col-2">
+            {{ form_row(form.nbServings) }}
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-3">
+            {{ form_row(form.preparation_time) }}
+        </div>
+        <div class="col-3">
+            {{ form_row(form.cooking_time) }}
         </div>
     </div>
     <div class="heading text-right">
@@ -80,7 +88,7 @@
         {% endfor %}
     </ol>
     
-    <button type="submit" class="btn btn-light shadow">Save</button>
+    <button type="submit" class="btn btn-light shadow">Sauvegarder</button>
 {{ form_end(form, {render_rest: false}) }}
 {% endblock %}
 

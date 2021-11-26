@@ -71,7 +71,8 @@ class RecipeController extends AbstractController
             $directory = $this->getParameter('images_directory');
             $image->move($directory, $imageName);
             }
-            $recipeRepository->add($recipe->getName(), $recipe->getType(), $recipe->getDifficulty(), $recipe->getTime(), $imageName = null);
+            $recipeRepository->add($recipe->getName(), $recipe->getType(), $recipe->getDifficulty(), 
+                $recipe->getPreparationTime(), $recipe->getCookingTime(), $imageName = null);
             $r = $recipeRepository->findOneByName($recipe->getName());
 
             foreach ($recipe->getIngredients() as $ingredient) {

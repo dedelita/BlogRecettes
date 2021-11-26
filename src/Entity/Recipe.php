@@ -54,7 +54,22 @@ class Recipe
     /**
      * @ORM\Column(type="time")
      */
-    private $time;
+    private $preparationTime;
+
+    /**
+     * @ORM\Column(type="integer")
+     */
+    private $nbServings;
+
+    /**
+     * @ORM\Column(type="time")
+     */
+    private $cookingTime;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $description;
 
     public function __construct()
     {
@@ -175,14 +190,50 @@ class Recipe
         return $this;
     }
 
-    public function getTime(): ?\DateTimeInterface
+    public function getPreparationTime(): ?\DateTimeInterface
     {
-        return $this->time;
+        return $this->preparationTime;
     }
 
-    public function setTime(\DateTimeInterface $time): self
+    public function setPreparationTime(\DateTimeInterface $preparationTime): self
     {
-        $this->time = $time;
+        $this->preparationTime = $preparationTime;
+
+        return $this;
+    }
+
+    public function getNbServings(): ?int
+    {
+        return $this->nbServings;
+    }
+
+    public function setNbServings(int $nbServings): self
+    {
+        $this->nbServings = $nbServings;
+
+        return $this;
+    }
+
+    public function getCookingTime(): ?\DateTimeInterface
+    {
+        return $this->cookingTime;
+    }
+
+    public function setCookingTime(\DateTimeInterface $cookingTime): self
+    {
+        $this->cookingTime = $cookingTime;
+
+        return $this;
+    }
+
+    public function getDescription(): ?string
+    {
+        return $this->description;
+    }
+
+    public function setDescription(string $description): self
+    {
+        $this->description = $description;
 
         return $this;
     }

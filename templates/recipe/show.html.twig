@@ -5,10 +5,32 @@
 {% block body %}
 <div class="title text-center">
     <h1>{{ recipe.name }}</h1>
-    <img src="{{ asset("images/" ~ recipe.image) }}" alt="image de la recette {{ recipe.name }}" width="300"/>
+    {% if recipe.image %}
+        <img src="{{ asset("images/" ~ recipe.image) }}" alt="image de la recette {{ recipe.name }}" width="300"/>
+    {% endif %}
+</div>
+<div class="col text-start mb-3 font-weight-bold">
+    <div>{{ recipe.difficulty | capitalize }}</div>
+    <div><i class="bi bi-clock"></i>
+        {% if recipe.preparationTime|date("G") > 0 %}
+            {{ recipe.preparationTime | date('G\\h') }}
+        {% endif %}
+        {% if recipe.preparationTime|date("i") > 0 %}
+            {{ recipe.preparationTime|date('i') }}min
+        {% endif %}
+    </div>
+    <div>
+        <i class="bi bi-thermometer-half"></i>
+        {% if recipe.cookingTime|date("G") > 0 %}
+            {{ recipe.cookingTime | date('G\\h') }}
+        {% endif %}
+        {% if recipe.cookingTime|date("i") > 0 %}
+            {{ recipe.cookingTime|date('i') }}min
+        {% endif %}
+    </div>
 </div>
 <div>
-    <h3>Les ingrédients</h3>
+    <h3><i class="bi bi-basket"></i> Les ingrédients</h3>
     <ul class="show ingredients">
     {% for ing in recipe.ingredients %}
         {% set char = ing.name|slice(0,1) %}
@@ -23,7 +45,7 @@
             <li>{{ ing.number }} {{ ing.type }} {{ d }} {{ ing.name }}</li>
     {% endfor %}
     </ul>
-    <h3>Les étapes</h3>
+    <h3><i class="bi bi-card-list"></i> Les étapes</h3>
     <ol class="show steps">
     {% for step in recipe.steps %}
         <li><p>{{ step.text }}</p></li>

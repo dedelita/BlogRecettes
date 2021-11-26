@@ -7,15 +7,15 @@
 {% for recipe in recipes %}
 <div class="col">
     <div class="card">
-        {% if recipe.image %}
             <a href="{{ path('recipe', {id: recipe.id}) }}" class="recipe">
+        {% if recipe.image %}
                 <img src="{{ asset('images/' ~ recipe.image) }}" class="card-image cover" 
                     alt="image de la recette {{ recipe.name }}" title="{{ recipe.name }}">
+        {% else %}
+            <img src="{{ asset('build/images/' ~ recipe.type ~ '.png') }}" class="card-image cover"  alt="{{ recipe.type }}">
+        {% endif %}
                 <img class="type" src="{{ asset('build/images/' ~ recipe.type ~ '.png') }}" alt="{{ recipe.type }}" title="{{recipe.type}}" />
             </a> 
-        {% else %}
-            <img src="{{ asset('build/images/' ~ recipe.type ~ '32.png') }}" width="50" class="card-img-top" alt="{{ recipe.type }}">
-        {% endif %}
     <div class="card-body">
             <h5 class="card-title">{{ recipe.name }}</h5>
         </div>

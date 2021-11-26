@@ -36,18 +36,17 @@
             </div>
         </nav> 
         {% endif %}
-        {% if app.request.attributes.get('_route') != "app_login"
-            and (app.user and "ROLE_ADMIN" in app.user.roles) %}
-        {% include "admin/menu.html.twig" %}
+        {% if app.request.attributes.get('_route') != "app_login" and (app.user and "ROLE_ADMIN" in app.user.roles) %}
+            {% include "admin/menu.html.twig" %}
         {% endif %}
         <div class="{% if app.request.attributes.get('_route') != "app_login"
             and (app.user and "ROLE_ADMIN" in app.user.roles) %}with-sb{% endif %}">
-        <div class="container pt-3">
-        {% block body %}{% endblock %}
-        </div>
-        <footer class="py-5 ps-2 mt-5 bg-light">
-            {% include "about.html.twig" %}
-        </footer>
+            <div class="container pt-3">
+                {% block body %}{% endblock %}
+            </div>
+            <footer class="py-5 ps-2 mt-5 bg-light">
+                {% include "about.html.twig" %}
+            </footer>
         </div>
     </body>
 </html>

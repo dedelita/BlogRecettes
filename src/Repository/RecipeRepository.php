@@ -24,12 +24,13 @@ class RecipeRepository extends ServiceEntityRepository
         $this->_em->flush();
     }
 
-    public function add($name, $type, $difficulty, $time, $imageName) {
+    public function add($name, $type, $difficulty, $preparation_time, $cooking_time, $imageName) {
         $recipe = new Recipe();
         $recipe->setName($name)
             ->setType($type)
             ->setDifficulty($difficulty)
-            ->setTime($time)
+            ->setPreparationTime($preparation_time)
+            ->setCookingTime($cooking_time)
             ->setImage($imageName);
         $this->save($recipe);
 
