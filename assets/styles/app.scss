@@ -1,8 +1,14 @@
 @import "~bootstrap/scss/bootstrap";
 @import url("https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css");
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500&display=swap');
 
 @include box-shadow($btn-box-shadow);
 
+$star: #e6c315;
+
+* {
+    font-family: 'Inter', sans-serif;
+}
 h1, h2, h3,
 h4, h5, h6 {
     @extend %headings !optional;
@@ -106,8 +112,54 @@ a {
     margin: 0 5px;
     padding: 5px 15px 10px;
 }
-.row.recipe {
+.row.list {
     margin: 0 5px;
     border-bottom: 1.5px solid darkgrey;
     padding: 5px 15px 10px;
+}
+
+/* Comment */
+.comment {
+    padding: 0 8px;
+    border: black 1px solid;
+}
+
+.comment.odd {
+    background-color: white;
+}
+
+.comment.even {
+    background-color: white;
+}
+
+.comment .writer {
+    padding: 0 16px;
+    font-size: 15px;
+}
+
+.writer > span {
+    padding: 5px;
+}
+
+.writer .bi {
+    font-size: 20px;
+}
+
+.writer-icon {
+    border: black 2px solid;
+    width:35px;
+    height:35px;
+    font-size:20px;
+}
+.comment .content {
+    padding: 0 10px 10px;
+}
+
+.star {
+    color: $star;
+    font-size: 1.5em;
+}
+
+.star.mini {
+    font-size: 1rem;
 }

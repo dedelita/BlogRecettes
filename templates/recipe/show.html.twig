@@ -4,14 +4,14 @@
 
 {% block body %}
 <div class="title text-center">
-    <h1>{{ recipe.name }}</h1>
+    <h1 class="mb-5">{{ recipe.name }}</h1>
     {% if recipe.image %}
         <img src="{{ asset("images/" ~ recipe.image) }}" alt="image de la recette {{ recipe.name }}" width="300"/>
     {% endif %}
 </div>
-<div class="col text-start mb-3 font-weight-bold">
-    <div>{{ recipe.difficulty | capitalize }}</div>
-    <div><i class="bi bi-clock"></i>
+<div class="row justify-content-center text-start mb-3 mt-1">
+    <div class="col-auto">{{ recipe.difficulty | capitalize }}</div>
+    <div class="col-auto"><i class="bi bi-clock"></i>
         {% if recipe.preparationTime|date("G") > 0 %}
             {{ recipe.preparationTime | date('G\\h') }}
         {% endif %}
@@ -19,7 +19,7 @@
             {{ recipe.preparationTime|date('i') }}min
         {% endif %}
     </div>
-    <div>
+    <div class="col-auto">
         <i class="bi bi-thermometer-half"></i>
         {% if recipe.cookingTime|date("G") > 0 %}
             {{ recipe.cookingTime | date('G\\h') }}
@@ -52,4 +52,61 @@
     {% endfor %}
     </ol>
 </div>
+
+<div class="container mt-3">
+{% for comment in recipe.comments %}
+<div class="comment {% if loop.index is even %}even{% else %}odd{% endif %} 
+        {% if not(loop.first) %}border-top-0{% endif %} {% if loop.last %}mb-3{% endif %}">
+    <div class="writer fw-bold row">
+    <div class="col-auto pe-0">
+        <div id="writer_{{ loop.index0 }}" class="writer-icon rounded-circle text-center mt-2">{{ comment.writer | first }}</div>
+    </div>
+    <div class="col-auto">
+           <span class="star mini">
+            {% for i in 0..4 %}
+                {% if i < comment.stars %}
+                    <i class="show-rating-star bi bi-star-fill selected"></i>
+                {% else %}
+                    <i class="show-rating-star bi bi-star"></i>
+                {% endif %}
+            {% endfor %}
+            </span>
+            <div>
+                {{ comment.writer | capitalize }}
+            </div>
+        </div>
+        <span class="col text-muted text-end">
+            <i class="bi bi-clock"></i> {{ comment.createdDate | date("d/m/Y") }}
+        </span>
+    </div>
+    <div class="content">
+        <p class="card-text">{{ comment.content | capitalize }}</p>
+    </div>
+</div>
+{% endfor %}
+</div>
+<hr>
+{% include "add_comment.html.twig" %}
+{% endblock %}
+
+{% block js %}
+        function randomColor(){
+            var colors = ["#FF851B", "#B10DC9", "#0074D9", "#85144b", "#3D9970"]
+            var color = "#";
+            var randomHex = "123456ABCDEF";  
+            for(var i = 0; i<6; i++){
+                color+= randomHex[Math.floor(Math.random()*16)]
+            }
+            return colors[Math.floor(Math.random() * colors.length)];
+        }
+    document.addEventListener("DOMContentLoaded", function() {
+        for(var i = 0; i < 4; i++) {
+            var newColor = randomColor();
+            console.log(newColor)
+            document.getElementById("writer_" + i).style.borderColor = newColor;
+            document.getElementById("writer_" + i).style.color = newColor;
+        }
+    })
+    
+    {% include "js/star_rating.js" %}
 {% endblock %}

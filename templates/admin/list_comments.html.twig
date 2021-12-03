@@ -1,0 +1,35 @@
+{% extends "base.html.twig" %}
+{% block title %}Liste des recettes{% endblock %}
+{% block body %}
+<div>
+    <div class="row titles fw-bold align-items-end text-center">
+        <div class="col-2 text-start">Pseudo</div>
+        <div class="col-5 text-start">Commentaire</div>
+        <div class="col-1">Note</div>
+        <div class="col-2">Date de création</div>
+        <div class="col-2">Actions</div>
+    </div>
+    <hr>
+{% for comment in comments %}
+
+   			{{ render(path('admin_edit_comment', {id: comment.id})) }}
+{% include "modals/delete_comment.html.twig" with {id: comment.id, text: comment.id} %}
+    <div class="row list {% if not loop.first %}mt-2{% endif %} text-center">
+        <div class="col-2 ps-2 text-start">{{ comment.writer }}</div>
+        <div class="col-5 text-start">{{ comment.content | capitalize }}</div>
+        <div class="col-1">{{ comment.stars }}</div>
+        <div class="col-2">{{ comment.createdDate|date("d/m/Y") }}</div>
+        <div class="col-2">
+            <a class="text-dark me-3"  data-bs-toggle="modal" 
+                data-bs-target="#editCommentModal{{comment.id}}" title="Modifier ce commentaire">
+                <i class="bi bi-pencil-square"></i>
+            </a>
+            <a class="text-danger" data-bs-toggle="modal"
+                data-bs-target="#deleteAccountModal{{comment.id}}" title="Supprimer ce commentaire">
+                <i class="bi bi-trash-fill"></i>
+            </a>
+        </div>
+    </div>
+{% endfor %}
+</div>
+{% endblock %}

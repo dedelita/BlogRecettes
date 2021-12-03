@@ -1,0 +1,17 @@
+<div class="modal fade hide" id="deleteAccountModal{{id}}" tabindex="-1" role="dialog" aria-labelledby="deleteAccountModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header border-0">
+                <h4 class="modal-title p-0 center" id="deleteAccountModalLabel">
+                    Etes-vous sûr de vouloir supprimer ce commentaire ?
+                </h4>
+            </div>
+            <div class="modal-body">
+                <div class="text-right align-self-center col">
+                    <button type="button" class="btn btn-default" data-bs-dismiss="modal">Annuler</button>
+                    <a href="{{ path('admin_delete_comment', {id: id}) }}" class="btn btn-danger modal-submit">Oui</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

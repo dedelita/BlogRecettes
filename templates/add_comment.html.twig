@@ -1,0 +1,22 @@
+<div class="ms-4 w-75">
+{{ form_start(form) }}
+    <div class="form-group row align-items-center">
+        <div class="col-auto">{{ form_label(form.writer) }}</div>
+        <div class="col-auto">{{ form_widget(form.writer) }}</div>
+    </div>
+    <div class="form-group mb-2">
+        <span class="star">
+            {% for i in 0..4 %}
+                {% if i < form.stars.vars.value %}
+                    <i id="{{ i }}" class="rating-star bi bi-star-fill selected"></i>
+                {% else %}
+                    <i id="{{ i }}" class="rating-star bi bi-star"></i>
+                {% endif %}
+            {% endfor %}
+        </span>
+    </div>
+    {{ form_widget(form.stars) }}
+    {{ form_row(form.content) }}
+    <button type="submit" class="btn btn-light">Ajouter</button>
+{{ form_end(form) }}
+</div>

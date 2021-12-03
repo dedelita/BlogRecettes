@@ -14,7 +14,7 @@
     </div>
     <hr>
 {% for recipe in recipes %}
-    <div class="row recipe text-center {% if not loop.first %}mt-2{% endif %}">
+    <div class="row list text-center {% if not loop.first %}mt-2{% endif %}">
         <div class="col-2 text-start ps-2">{{ recipe.name }}</div>
         <div class="col-2">
             {% if recipe.image %}

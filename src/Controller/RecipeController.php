@@ -2,9 +2,12 @@
 
 namespace App\Controller;
 
+use App\Entity\Comment;
 use App\Entity\Ingredient;
 use App\Entity\Recipe;
 use App\Form\RecipeType;
+use App\Form\CommentType;
+use App\Repository\CommentRepository;
 use App\Repository\IngredientRepository;
 use App\Repository\RecipeRepository;
 use App\Repository\StepRepository;
@@ -161,11 +164,10 @@ class RecipeController extends AbstractController
      */
     public function show(Request $request, RecipeRepository $recipeRepository,
         IngredientRepository $ingredientRepository, StepRepository $stepRepository,
-            TypeRepository $typeRepository)
+            TypeRepository $typeRepository, CommentRepository $commentRepository)
     {
         $recipe = $recipeRepository->find($request->get("id"));
         $ingredients = $ingredientRepository->findByRecipe($recipe);
-
         foreach ($ingredients as $ingredient) {
             $recipe->addIngredient($ingredient);
         }
@@ -174,9 +176,69 @@ class RecipeController extends AbstractController
         foreach ($steps as $step) {
             $recipe->addStep($step);
         }
+        
+        $comment = new Comment();
+        $comment->setRecipe($recipe);
+        $formComment = $this->createForm(CommentType::class, $comment);
+        $formComment->handleRequest($request);
+
+        if($formComment->isSubmitted() && $formComment->isValid()) {
+            $commentRepository->add($comment);
+            return $this->redirectToRoute('recipe', ['id' => $request->get("id")]);
+        }
+
         return $this->render('recipe/show.html.twig', [
             "types" => $typeRepository->findAll(),
-            'recipe' => $recipe
+            'recipe' => $recipe,
+            'form' => $formComment->createView()
         ]);
     }
+
+    
+
+    /**
+     * @Route("/admin/comments", name="admin_comments")
+     * @IsGranted("ROLE_ADMIN")
+     */
+    public function adminListComments(Request $request, CommentRepository $commentRepository)
+    {
+        $comments = $commentRepository->findAll();
+        return $this->render('admin/list_comments.html.twig', [
+            "comments" => $comments
+        ]);
+    }
+
+    /**
+     * @Route("admin/edit_comment/{id}", name="admin_edit_comment")
+     * @IsGranted("ROLE_ADMIN")
+     */
+    public function editComment(Request $request, CommentRepository $commentRepository)
+    {
+        $comment = $commentRepository->find($request->get("id"));
+        $form = $this->createForm(CommentType::class, $comment);
+        $form->handleRequest($request);
+
+        if($form->isSubmitted() && $form->isValid()) {
+            $commentRepository->save($comment);
+            return $this->redirectToRoute('admin_comments');
+        }   
+
+        return $this->render('modals/edit_comment.html.twig', [
+            "form" => $form->createView(),
+            "id" => $comment->getId()
+        ]);
+    }
+    
+    /**
+     * @Route("admin/delete_comment/{id}", name="admin_delete_comment")
+     * @IsGranted("ROLE_ADMIN")
+     */
+    public function deleteComment(Request $request, CommentRepository $commentRepository)
+    {
+        $commentRepository->delete($commentRepository->find($request->get("id")));
+
+        return $this->redirectToRoute('admin_comments');
+    }
+
+
 }
