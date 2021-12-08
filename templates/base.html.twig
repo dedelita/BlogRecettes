@@ -41,10 +41,10 @@
         {% endif %}
         <div class="{% if app.request.attributes.get('_route') != "app_login"
             and (app.user and "ROLE_ADMIN" in app.user.roles) %}with-sb{% endif %}">
-            <div class="container pt-3">
+            <div class="container page p-4 mt-5 rounded">
                 {% block body %}{% endblock %}
             </div>
-            <footer class="py-5 ps-2 mt-5 bg-light">
+            <footer class="py-4 pe-4 mt-5 bg-light text-end">
                 {% include "about.html.twig" %}
             </footer>
         </div>

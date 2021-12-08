@@ -1,0 +1,27 @@
+<div class="comment">
+    <div class="writer fw-bold row">
+        <div class="col-auto pe-0">
+            <div id="writer_{{ id }}" class="writer-icon rounded-circle text-center mt-2">{{ comment.writer | first }}</div>
+        </div>
+        <div class="col-auto">
+            <span class="star mini">
+            {% for i in 0..4 %}
+                {% if i < comment.stars %}
+                    <i class="show-rating-star bi bi-star-fill selected"></i>
+                {% else %}
+                    <i class="show-rating-star bi bi-star"></i>
+                {% endif %}
+            {% endfor %}
+            </span>
+            <div>
+                {{ comment.writer | capitalize }}
+            </div>
+        </div>
+        <span class="col text-muted text-end">
+            <i class="bi bi-clock"></i> {{ comment.createdDate | date("d/m/Y") }}
+        </span>
+    </div>
+    <div class="content">
+        <p class="card-text">{{ comment.content | capitalize }}</p>
+    </div>
+</div>

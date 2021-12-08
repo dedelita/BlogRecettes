@@ -4,6 +4,7 @@ namespace App\Form;
 
 use App\Entity\Comment;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -18,7 +19,19 @@ class CommentType extends AbstractType
             ->add('writer', TextType::class, [
                 'label' => 'Votre nom ou pseudo',
                 'label_attr' => [
-                    'class' => "col-form-label"
+                    'class' => 'col-form-label'
+                ],
+                'attr' => [
+                    'class' => 'mb-1'
+                ]
+            ])
+            ->add('email', EmailType::class, [
+                'label' => 'Votre email',
+                'label_attr' => [
+                    'class' => 'col-form-label'
+                ],
+                'attr' => [
+                    'class' => 'mb-1'
                 ]
             ])
             ->add('content', TextareaType::class, [

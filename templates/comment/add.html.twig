@@ -1,8 +1,11 @@
-<div class="ms-4 w-75">
+<div class="ms-5 w-75">
+<h4>Donnez votre avis</h4>
 {{ form_start(form) }}
     <div class="form-group row align-items-center">
         <div class="col-auto">{{ form_label(form.writer) }}</div>
         <div class="col-auto">{{ form_widget(form.writer) }}</div>
+        <div class="col-auto">{{ form_label(form.email) }}</div>
+        <div class="col-auto">{{ form_widget(form.email) }}</div>
     </div>
     <div class="form-group mb-2">
         <span class="star">
@@ -17,6 +20,8 @@
     </div>
     {{ form_widget(form.stars) }}
     {{ form_row(form.content) }}
-    <button type="submit" class="btn btn-light">Ajouter</button>
+    <div class="d-grid">
+        <button type="submit" class="btn btn-outline-secondary">Ajouter</button>
+    </div>
 {{ form_end(form) }}
 </div>

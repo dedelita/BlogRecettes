@@ -45,6 +45,7 @@ a {
 .heading > h3 > * {
     padding: 0;
 }
+
 .fixed-left {
     bottom: 0;
     width: 215px;
@@ -56,6 +57,10 @@ a {
 
 .with-sb {
     margin-left: 215px;
+}
+
+.page {
+    background-color: white;
 }
 
 .cover {
@@ -95,12 +100,9 @@ a {
     left: -10px;
 }
 
-.show.steps {
+.show {
     margin-left: 15px;
-    padding: 15px 30px;
-    width: 80%;
-    border: 1px solid lightgrey;
-    background-color: white;
+    padding: 5px 30px;
 }
 
 .btn-delete {
@@ -120,16 +122,9 @@ a {
 
 /* Comment */
 .comment {
-    padding: 0 8px;
-    border: black 1px solid;
-}
-
-.comment.odd {
-    background-color: white;
-}
-
-.comment.even {
-    background-color: white;
+    padding-left: 8px;
+    margin: 10px 0;
+    border-bottom: darkgrey thin solid;
 }
 
 .comment .writer {
@@ -150,9 +145,11 @@ a {
     width:35px;
     height:35px;
     font-size:20px;
+    padding-left: 1px;
+    padding-top: 1px;
 }
 .comment .content {
-    padding: 0 10px 10px;
+    padding: 8px 16px;
 }
 
 .star {
