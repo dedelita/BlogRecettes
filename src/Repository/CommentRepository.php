@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Comment;
+use App\Entity\Recipe;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -35,6 +36,25 @@ class CommentRepository extends ServiceEntityRepository
     {
         $this->_em->remove($comment);
         $this->_em->flush();
+    }
+    
+    public function findCommentsByRecipe(Recipe $recipe)
+    {
+        return $this->createQueryBuilder('c')
+            ->andWhere('c.replyTo = -1')
+            ->andWhere('c.recipe = :recipe')
+            ->setParameter('recipe', $recipe)
+            ->getQuery()
+            ->getResult();
+    }
+
+    public function findRepliesOf($id)
+    {
+        return $this->createQueryBuilder('c')
+            ->andWhere('c.replyTo = :id')
+            ->setParameter('id', $id)
+            ->getQuery()
+            ->getResult();
     }
     // /**
     //  * @return Comment[] Returns an array of Comment objects

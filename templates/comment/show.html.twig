@@ -1,18 +1,21 @@
+{% macro print_comments_recursively(comment, id) %}
 <div class="comment">
     <div class="writer fw-bold row">
         <div class="col-auto pe-0">
             <div id="writer_{{ id }}" class="writer-icon rounded-circle text-center mt-2">{{ comment.writer | first }}</div>
         </div>
-        <div class="col-auto">
-            <span class="star mini">
-            {% for i in 0..4 %}
-                {% if i < comment.stars %}
-                    <i class="show-rating-star bi bi-star-fill selected"></i>
-                {% else %}
-                    <i class="show-rating-star bi bi-star"></i>
-                {% endif %}
-            {% endfor %}
-            </span>
+        <div class="col align-self-center">
+            {% if not comment.replyTo %}
+                <span class="star mini">
+                {% for i in 0..4 %}
+                    {% if i < comment.stars %}
+                        <i class="show-rating-star bi bi-star-fill selected"></i>
+                    {% else %}
+                        <i class="show-rating-star bi bi-star"></i>
+                    {% endif %}
+                {% endfor %}
+                </span>
+            {% endif %}
             <div>
                 {{ comment.writer | capitalize }}
             </div>
@@ -24,4 +27,22 @@
     <div class="content">
         <p class="card-text">{{ comment.content | capitalize }}</p>
     </div>
+    <div class="text-end">
+        <button type="button"  id="dropdownMenuButton" class="btn btn-link text-secondary text-decoration-none dropdown-toggle"
+         data-bs-toggle="dropdown" aria-expanded="false">
+            <i class="bi bi-reply-fill"></i> Répondre
+        </button>
+        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+            {{ render(path("reply_to_comment", {id: comment.id})) }}
+        </div>
+    </div>
 </div>
+{% for reply in comment.replies %}
+<div class="ps-5">
+    {% set id = id + 1 %}
+    {{ _self.print_comments_recursively(reply, id) }}
+</div>
+{% endfor %}
+{% endmacro %}
+
+{{ _self.print_comments_recursively(comment, id) }}

@@ -1,25 +1,23 @@
-<div class="modal fade" id="editCommentModal{{id}}" tabindex="1" role="dialog" aria-labelledby="editCommentModal" aria-hidden="true">
+<div class="modal fade" id="replyToCommentModal{{id}}" tabindex="1" role="dialog" aria-labelledby="replyToCommentModal" aria-hidden="true">
     <div class="modal-dialog" role="document">
-        <div class="modal-content" id="editCommentModal">
+        <div class="modal-content" id="replyToCommentModal">
             <div class="modal-header border-0">
-                <h4 class="modal-title p-0 center">Modifier le commentaire</h4>
+                <h4 class="modal-title p-0 center">Répondre</h4>
             </div>
             <div class="modal-body pt-0">
-            {{ form_start(form, { 'action': path('admin_edit_comment', {id: id }) }) }}
+            {{ form_start(form, { 'action': path('admin_reply_to_comment', {id: id}) }) }}
                 <div class="form-group row align-items-center">
-                    <div class="col-auto">{{ form_widget(form.writer) }}</div>
                 </div>
                 {{ form_row(form.content) }}
                 <div class="not-displayed">
-                    {{ form_widget(form.stars) }}
-                    {{ form_widget(form.replyTo) }}
+                    {{ form_widget(form.writer) }}
                     {{ form_widget(form.email) }}
                 </div>
             <div class="pl-5">
             </div>
                 <div class="text-right pt-2">
                     <button type="button" class="btn btn-default" data-bs-dismiss="modal">Annuler</button>
-                    <button type="submit" class="btn btn-success modal-submit">Enregistrer</button>
+                    <button type="submit" class="btn btn-success modal-submit">Répondre</button>
                 </div>
             {{ form_end(form) }}
             </div>

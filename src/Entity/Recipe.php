@@ -244,6 +244,13 @@ class Recipe
         return $this;
     }
 
+    public function setComments($comments): self
+    {
+        $this->comments = new ArrayCollection($comments);
+
+        return $this;
+    }
+
     /**
      * @return Collection|Comment[]
      */

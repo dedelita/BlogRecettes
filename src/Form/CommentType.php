@@ -48,6 +48,7 @@ class CommentType extends AbstractType
                     "max" => 5
                 ]
             ])
+            ->add('replyTo', HiddenType::class)
         ;
     }
 

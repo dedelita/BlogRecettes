@@ -7,6 +7,7 @@ use App\Entity\Ingredient;
 use App\Entity\Recipe;
 use App\Form\RecipeType;
 use App\Form\CommentType;
+use App\Form\ReplyType;
 use App\Repository\CommentRepository;
 use App\Repository\IngredientRepository;
 use App\Repository\RecipeRepository;
@@ -176,6 +177,12 @@ class RecipeController extends AbstractController
         foreach ($steps as $step) {
             $recipe->addStep($step);
         }
+        $nbComments = count($recipe->getComments());
+        $comments = $commentRepository->findCommentsByRecipe($recipe);
+        foreach ($comments as $c) {
+            $c->setReplies($commentRepository->findRepliesOf($c->getId()));
+        }
+        $recipe->setComments($comments);
         
         $comment = new Comment();
         $comment->setRecipe($recipe);
@@ -190,7 +197,8 @@ class RecipeController extends AbstractController
         return $this->render('recipe/show.html.twig', [
             "types" => $typeRepository->findAll(),
             'recipe' => $recipe,
-            'form' => $formComment->createView()
+            'form' => $formComment->createView(),
+            'nbComments' => $nbComments
         ]);
     }
 
@@ -212,7 +220,7 @@ class RecipeController extends AbstractController
      * @Route("admin/edit_comment/{id}", name="admin_edit_comment")
      * @IsGranted("ROLE_ADMIN")
      */
-    public function editComment(Request $request, CommentRepository $commentRepository)
+    public function adminEditComment(Request $request, CommentRepository $commentRepository)
     {
         $comment = $commentRepository->find($request->get("id"));
         $form = $this->createForm(CommentType::class, $comment);
@@ -226,6 +234,56 @@ class RecipeController extends AbstractController
         return $this->render('modals/edit_comment.html.twig', [
             "form" => $form->createView(),
             "id" => $comment->getId()
+        ]);
+    }
+    
+    /**
+     * @Route("admin/reply_to_comment/{id}", name="admin_reply_to_comment")
+     * @IsGranted("ROLE_ADMIN")
+     */
+    public function adminReplyToComment(Request $request, CommentRepository $commentRepository)
+    {
+        $id = $request->get("id");
+        $reply_to = $commentRepository->find($id);
+        $comment = new Comment();
+        $comment->setWriter("Admin");
+        $comment->setEmail("test@test.fr");
+        $comment->setReplyTo($id);
+        $comment->setRecipe($reply_to->getRecipe());
+        $form = $this->createForm(ReplyType::class, $comment);
+        $form->handleRequest($request);
+
+        if($form->isSubmitted() && $form->isValid()) {
+            $commentRepository->add($comment);
+            return $this->redirectToRoute('admin_comments');
+        }   
+
+        return $this->render('modals/admin_reply.html.twig', [
+            "form" => $form->createView(),
+            "id" => $id
+        ]);
+    }
+    /**
+     * @Route("reply_to_comment/{id}", name="reply_to_comment")
+     */
+    public function replyToComment(Request $request, CommentRepository $commentRepository)
+    {
+        $id = $request->get("id");
+        $reply_to = $commentRepository->find($id);
+        $comment = new Comment();
+        $comment->setReplyTo($id);
+        $comment->setRecipe($reply_to->getRecipe());
+        $replyForm = $this->createForm(ReplyType::class, $comment);
+        $replyForm->handleRequest($request);
+
+        if($replyForm->isSubmitted() && $replyForm->isValid()) {
+            $commentRepository->add($comment);
+            return $this->redirectToRoute('recipe', ["id" => $reply_to->getRecipe()->getId()]);
+        }   
+
+        return $this->render('comment/reply.html.twig', [
+            "replyForm" => $replyForm->createView(),
+            "id" => $id
         ]);
     }
     

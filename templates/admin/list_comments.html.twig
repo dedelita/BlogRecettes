@@ -7,25 +7,30 @@
         <div class="col-5 text-start">Commentaire</div>
         <div class="col-1">Note</div>
         <div class="col-1">Recette</div>
-        <div class="col-2">Date de création</div>
-        <div class="col-1">Actions</div>
+        <div class="col-1">Création</div>
+        <div class="col-2">Actions</div>
     </div>
     <hr>
 {% for comment in comments %}
     {{ render(path('admin_edit_comment', {id: comment.id})) }}
+    {{ render(path('admin_reply_to_comment', {id: comment.id})) }}
     {% include "modals/delete_comment.html.twig" with {id: comment.id, text: comment.id} %}
     <div class="row list {% if not loop.first %}mt-2{% endif %} text-center">
         <div class="col-2 ps-2 text-start">{{ comment.writer }}</div>
         <div class="col-5 text-start">{{ comment.content | capitalize }}</div>
         <div class="col-1">{{ comment.stars }}</div>
         <div class="col-1">{{ comment.recipe.id }}</div>
-        <div class="col-2">{{ comment.createdDate|date("d/m/Y") }}</div>
-        <div class="col-1">
-            <a class="text-dark me-3"  data-bs-toggle="modal" 
+        <div class="col-1">{{ comment.createdDate|date("d/m/Y") }}</div>
+        <div class="col-2">
+            <a class="text-dark me-2" type="button" data-bs-toggle="modal" 
                 data-bs-target="#editCommentModal{{comment.id}}" title="Modifier ce commentaire">
                 <i class="bi bi-pencil-square"></i>
             </a>
-            <a class="text-danger" data-bs-toggle="modal"
+            <a class="text-dark me-2" type="button" data-bs-toggle="modal" 
+                data-bs-target="#replyToCommentModal{{comment.id}}" title="Répondre à ce commentaire">
+                <i class="bi bi-reply-fill"></i>
+            </a>
+            <a class="text-danger" type="button" data-bs-toggle="modal"
                 data-bs-target="#deleteAccountModal{{comment.id}}" title="Supprimer ce commentaire">
                 <i class="bi bi-trash-fill"></i>
             </a>

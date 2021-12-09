@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\CommentRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -40,6 +42,7 @@ class Comment
 
     /**
      * @ORM\Column(type="integer")
+     * * @ORM\JoinColumn(nullable=true)
      */
     private $stars;
 
@@ -47,6 +50,18 @@ class Comment
      * @ORM\Column(type="string", length=255)
      */
     private $email;
+
+    /**
+     * @ORM\Column(type="integer")
+     */
+    private $replyTo;
+
+    private $replies = [];
+
+    public function __construct()
+    {
+        $this->replyTo = -1;
+    }
 
     public function getId(): ?int
     {
@@ -123,5 +138,34 @@ class Comment
         $this->email = $email;
 
         return $this;
+    }
+
+    public function getReplyTo(): ?int
+    {
+        return $this->replyTo;
+    }
+
+    public function setReplyTo(?int $replyTo): self
+    {
+        $this->replyTo = $replyTo;
+
+        return $this;
+    }
+
+    public function getReplies(): array
+    {
+        return array_unique($this->replies);
+    }
+
+    public function setReplies(array $replies): self
+    {
+        $this->replies = $replies;
+
+        return $this;
+    }
+
+    public function __toString()
+    {
+        return $this->writer . " " . $this->content;
     }
 }

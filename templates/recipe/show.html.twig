@@ -60,7 +60,7 @@
 </div>
 
 <h3><i class="bi bi-chat-left-text"></i> Les commentaires</h3>
-<div class="show comments mt-3 w-75" data-nb-comments="{{ recipe.comments | length }}">
+<div class="show comments mt-3 w-75" data-nb-comments="{{ nbComments }}">
 {% for comment in recipe.comments %}
     {% include "comment/show.html.twig" with {comment: comment, id:loop.index0} %}
 {% endfor %}
