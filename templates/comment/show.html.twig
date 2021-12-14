@@ -5,7 +5,7 @@
             <div id="writer_{{ id }}" class="writer-icon rounded-circle text-center mt-2">{{ comment.writer | first }}</div>
         </div>
         <div class="col align-self-center">
-            {% if not comment.replyTo %}
+            {% if comment.replyTo == -1 %}
                 <span class="star mini">
                 {% for i in 0..4 %}
                     {% if i < comment.stars %}
@@ -27,12 +27,12 @@
     <div class="content">
         <p class="card-text">{{ comment.content | capitalize }}</p>
     </div>
-    <div class="text-end">
-        <button type="button"  id="dropdownMenuButton" class="btn btn-link text-secondary text-decoration-none dropdown-toggle"
-         data-bs-toggle="dropdown" aria-expanded="false">
+    <div class="dropstart text-end">
+        <a href="#" role="button" class="text-secondary btn-reply" data-bs-toggle="dropdown" 
+        aria-expanded="false">
             <i class="bi bi-reply-fill"></i> Répondre
-        </button>
-        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+        </a>
+        <div class="dropdown-menu reply-box">
             {{ render(path("reply_to_comment", {id: comment.id})) }}
         </div>
     </div>

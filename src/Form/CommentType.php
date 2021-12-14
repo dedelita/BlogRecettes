@@ -38,14 +38,14 @@ class CommentType extends AbstractType
                 'label' => false,
                 'attr' => [
                     'placeholder' => 'Entrez votre commentaire.',
-                    "rows" => 5
+                    'row' => 5
                 ]
             ])
             ->add('stars', HiddenType::class, [
-                "attr" => [
-                    "class" => "rating-input",
-                    "min" => 0,
-                    "max" => 5
+                'attr' => [
+                    'class' => 'rating-input',
+                    'min' => 0,
+                    'max' => 5
                 ]
             ])
             ->add('replyTo', HiddenType::class)

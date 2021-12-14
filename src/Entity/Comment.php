@@ -36,15 +36,14 @@ class Comment
     private $recipe;
 
     /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private $stars;
+
+    /**
      * @ORM\Column(type="date")
      */
     private $createdDate;
-
-    /**
-     * @ORM\Column(type="integer")
-     * * @ORM\JoinColumn(nullable=true)
-     */
-    private $stars;
 
     /**
      * @ORM\Column(type="string", length=255)
@@ -104,6 +103,18 @@ class Comment
         return $this;
     }
 
+    public function getStars(): ?int
+    {
+        return $this->stars;
+    }
+
+    public function setStars(?int $stars): self
+    {
+        $this->stars = $stars;
+
+        return $this;
+    }
+
     public function getCreatedDate(): ?\DateTimeInterface
     {
         return $this->createdDate;
@@ -112,18 +123,6 @@ class Comment
     public function setCreatedDate(\DateTimeInterface $createdDate): self
     {
         $this->createdDate = $createdDate;
-
-        return $this;
-    }
-
-    public function getStars(): ?int
-    {
-        return $this->stars;
-    }
-
-    public function setStars(int $stars): self
-    {
-        $this->stars = $stars;
 
         return $this;
     }
@@ -162,6 +161,11 @@ class Comment
         $this->replies = $replies;
 
         return $this;
+    }
+
+    public function addReply(Comment $reply)
+    {
+        $this->replies[] = $reply;
     }
 
     public function __toString()

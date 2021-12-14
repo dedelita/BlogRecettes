@@ -48,14 +48,15 @@ class CommentRepository extends ServiceEntityRepository
             ->getResult();
     }
 
-    public function findRepliesOf($id)
+    public function findReplies()
     {
         return $this->createQueryBuilder('c')
-            ->andWhere('c.replyTo = :id')
-            ->setParameter('id', $id)
+            ->andWhere('c.replyTo != -1')
+            ->orderBy('c.replyTo', 'ASC')
             ->getQuery()
             ->getResult();
     }
+
     // /**
     //  * @return Comment[] Returns an array of Comment objects
     //  */

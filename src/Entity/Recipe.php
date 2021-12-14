@@ -72,7 +72,7 @@ class Recipe
     private $description;
 
     /**
-     * @ORM\OneToMany(targetEntity=Comment::class, mappedBy="recipe", orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity=Comment::class, mappedBy="recipe", cascade = {"remove"})
      */
     private $comments;
 

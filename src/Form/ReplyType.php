@@ -17,21 +17,24 @@ class ReplyType extends AbstractType
     {
         $builder
         ->add('writer', TextType::class, [
-            'label' => 'Votre nom ou pseudo',
+            'label' => false,
             'label_attr' => [
                 'class' => 'col-form-label'
             ],
             'attr' => [
-                'class' => 'mb-1'
+                'class' => 'mb-1',
+                'placeholder' => 'Votre nom ou pseudo',
             ]
         ])
         ->add('email', EmailType::class, [
-            'label' => 'Votre email',
+            'label' => false,
             'label_attr' => [
                 'class' => 'col-form-label'
             ],
             'attr' => [
-                'class' => 'mb-1'
+                'class' => 'mb-1',
+                'placeholder' => 'Votre email',
+                'resize' => false
             ]
         ])
         ->add('content', TextareaType::class, [

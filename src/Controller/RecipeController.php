@@ -18,6 +18,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
+use Symfony\Component\HttpFoundation\Cookie;
 
 class RecipeController extends AbstractController
 {
@@ -179,25 +180,38 @@ class RecipeController extends AbstractController
         }
         $nbComments = count($recipe->getComments());
         $comments = $commentRepository->findCommentsByRecipe($recipe);
-        foreach ($comments as $c) {
-            $c->setReplies($commentRepository->findRepliesOf($c->getId()));
+        $replies = $commentRepository->findReplies();
+        foreach ($replies as $reply) {
+            $commentRepository->find($reply->getReplyTo())->addReply($reply);
         }
         $recipe->setComments($comments);
         
+        $username = $request->cookies->get("username");
+        $email = $request->cookies->get("email");
         $comment = new Comment();
         $comment->setRecipe($recipe);
+        if($username)
+            $comment->setWriter($username);
+        if($email)
+            $comment->setEmail($email);
         $formComment = $this->createForm(CommentType::class, $comment);
         $formComment->handleRequest($request);
 
         if($formComment->isSubmitted() && $formComment->isValid()) {
+            $response = new Response();
+            $cookie = new Cookie('username', $comment->getWriter() , time() + (365 * 24 * 60 * 60));
+            $response->headers->setCookie($cookie);
+            $cookie = new Cookie('email', $comment->getEmail() , time() + (365 * 24 * 60 * 60));
+            $response->headers->setCookie($cookie);
+            $response->sendHeaders();
             $commentRepository->add($comment);
             return $this->redirectToRoute('recipe', ['id' => $request->get("id")]);
         }
 
-        return $this->render('recipe/show.html.twig', [
+        return $this->renderForm('recipe/show.html.twig', [
             "types" => $typeRepository->findAll(),
             'recipe' => $recipe,
-            'form' => $formComment->createView(),
+            'form' => $formComment,
             'nbComments' => $nbComments
         ]);
     }
@@ -231,8 +245,8 @@ class RecipeController extends AbstractController
             return $this->redirectToRoute('admin_comments');
         }   
 
-        return $this->render('modals/edit_comment.html.twig', [
-            "form" => $form->createView(),
+        return $this->renderForm('modals/edit_comment.html.twig', [
+            "form" => $form,
             "id" => $comment->getId()
         ]);
     }
@@ -258,31 +272,8 @@ class RecipeController extends AbstractController
             return $this->redirectToRoute('admin_comments');
         }   
 
-        return $this->render('modals/admin_reply.html.twig', [
-            "form" => $form->createView(),
-            "id" => $id
-        ]);
-    }
-    /**
-     * @Route("reply_to_comment/{id}", name="reply_to_comment")
-     */
-    public function replyToComment(Request $request, CommentRepository $commentRepository)
-    {
-        $id = $request->get("id");
-        $reply_to = $commentRepository->find($id);
-        $comment = new Comment();
-        $comment->setReplyTo($id);
-        $comment->setRecipe($reply_to->getRecipe());
-        $replyForm = $this->createForm(ReplyType::class, $comment);
-        $replyForm->handleRequest($request);
-
-        if($replyForm->isSubmitted() && $replyForm->isValid()) {
-            $commentRepository->add($comment);
-            return $this->redirectToRoute('recipe', ["id" => $reply_to->getRecipe()->getId()]);
-        }   
-
-        return $this->render('comment/reply.html.twig', [
-            "replyForm" => $replyForm->createView(),
+        return $this->renderForm('modals/admin_reply.html.twig', [
+            "form" => $form,
             "id" => $id
         ]);
     }

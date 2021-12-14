@@ -1,12 +1,14 @@
+<div class="my-3">
 {{ form_start(replyForm, { 'action': path('reply_to_comment', {id: id}) }) }}
+<div class="form-group row align-items-center">
+    <div class="col-auto">{{ form_widget(replyForm.writer) }}</div>
+    <div class="col-auto">{{ form_widget(replyForm.email) }}</div>
+</div>
 <div class="form-group align-items-center">
+    {{ form_row(replyForm.content) }}
 </div>
-{{ form_row(replyForm.content) }}
-{{ form_row(replyForm.writer) }}
-{{ form_row(replyForm.email) }}
-<div class="pl-5">
-</div>
-<div class="text-right pt-2">
-<button type="submit" class="btn btn-success modal-submit">Répondre</button>
+<div class="d-grid">
+<button type="submit" class="btn btn-outline-secondary">Répondre</button>
 </div>
 {{ form_end(replyForm) }}
+</div>

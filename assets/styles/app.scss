@@ -124,6 +124,7 @@ a {
 /* Comment */
 .comment {
     padding-left: 8px;
+    padding-bottom: 5px;
     margin: 10px 0;
     border-bottom: darkgrey thin solid;
 }
@@ -160,4 +161,13 @@ a {
 
 .star.mini {
     font-size: 1rem;
+}
+
+.btn-reply {
+    margin-left: 15px;
+    padding: 5px 10px;
+}
+
+.reply-box {
+    width: 500px;
 }
