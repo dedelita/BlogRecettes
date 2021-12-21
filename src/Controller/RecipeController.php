@@ -18,6 +18,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
+use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\Cookie;
 
 class RecipeController extends AbstractController
@@ -180,7 +181,7 @@ class RecipeController extends AbstractController
         }
         $nbComments = count($recipe->getComments());
         $comments = $commentRepository->findCommentsByRecipe($recipe);
-        $replies = $commentRepository->findReplies();
+        $replies = $commentRepository->findRepliesByRecipe($recipe);
         foreach ($replies as $reply) {
             $commentRepository->find($reply->getReplyTo())->addReply($reply);
         }
@@ -198,14 +199,18 @@ class RecipeController extends AbstractController
         $formComment->handleRequest($request);
 
         if($formComment->isSubmitted() && $formComment->isValid()) {
-            $response = new Response();
-            $cookie = new Cookie('username', $comment->getWriter() , time() + (365 * 24 * 60 * 60));
-            $response->headers->setCookie($cookie);
-            $cookie = new Cookie('email', $comment->getEmail() , time() + (365 * 24 * 60 * 60));
-            $response->headers->setCookie($cookie);
-            $response->sendHeaders();
-            $commentRepository->add($comment);
-            return $this->redirectToRoute('recipe', ['id' => $request->get("id")]);
+            if($comment->getStars() == NULL)
+                $formComment->addError(new FormError("Veuillez donner une note."));
+            else {
+                $response = new Response();
+                $cookie = new Cookie('username', $comment->getWriter() , time() + (365 * 24 * 60 * 60));
+                $response->headers->setCookie($cookie);
+                $cookie = new Cookie('email', $comment->getEmail() , time() + (365 * 24 * 60 * 60));
+                $response->headers->setCookie($cookie);
+                $response->sendHeaders();
+                $commentRepository->add($comment);
+                return $this->redirectToRoute('recipe', ['id' => $request->get("id")]);
+            }
         }
 
         return $this->renderForm('recipe/show.html.twig', [
@@ -215,79 +220,5 @@ class RecipeController extends AbstractController
             'nbComments' => $nbComments
         ]);
     }
-
-    
-
-    /**
-     * @Route("/admin/comments", name="admin_comments")
-     * @IsGranted("ROLE_ADMIN")
-     */
-    public function adminListComments(Request $request, CommentRepository $commentRepository)
-    {
-        $comments = $commentRepository->findAll();
-        return $this->render('admin/list_comments.html.twig', [
-            "comments" => $comments
-        ]);
-    }
-
-    /**
-     * @Route("admin/edit_comment/{id}", name="admin_edit_comment")
-     * @IsGranted("ROLE_ADMIN")
-     */
-    public function adminEditComment(Request $request, CommentRepository $commentRepository)
-    {
-        $comment = $commentRepository->find($request->get("id"));
-        $form = $this->createForm(CommentType::class, $comment);
-        $form->handleRequest($request);
-
-        if($form->isSubmitted() && $form->isValid()) {
-            $commentRepository->save($comment);
-            return $this->redirectToRoute('admin_comments');
-        }   
-
-        return $this->renderForm('modals/edit_comment.html.twig', [
-            "form" => $form,
-            "id" => $comment->getId()
-        ]);
-    }
-    
-    /**
-     * @Route("admin/reply_to_comment/{id}", name="admin_reply_to_comment")
-     * @IsGranted("ROLE_ADMIN")
-     */
-    public function adminReplyToComment(Request $request, CommentRepository $commentRepository)
-    {
-        $id = $request->get("id");
-        $reply_to = $commentRepository->find($id);
-        $comment = new Comment();
-        $comment->setWriter("Admin");
-        $comment->setEmail("test@test.fr");
-        $comment->setReplyTo($id);
-        $comment->setRecipe($reply_to->getRecipe());
-        $form = $this->createForm(ReplyType::class, $comment);
-        $form->handleRequest($request);
-
-        if($form->isSubmitted() && $form->isValid()) {
-            $commentRepository->add($comment);
-            return $this->redirectToRoute('admin_comments');
-        }   
-
-        return $this->renderForm('modals/admin_reply.html.twig', [
-            "form" => $form,
-            "id" => $id
-        ]);
-    }
-    
-    /**
-     * @Route("admin/delete_comment/{id}", name="admin_delete_comment")
-     * @IsGranted("ROLE_ADMIN")
-     */
-    public function deleteComment(Request $request, CommentRepository $commentRepository)
-    {
-        $commentRepository->delete($commentRepository->find($request->get("id")));
-
-        return $this->redirectToRoute('admin_comments');
-    }
-
 
 }

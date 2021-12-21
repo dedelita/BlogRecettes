@@ -32,6 +32,13 @@ class CommentRepository extends ServiceEntityRepository
         $this->_em->flush();
     }
 
+    public function deleteRepliesOf(int $id)
+    {
+        $replies = $this->findRepliesOf($id);
+        foreach ($replies as $reply) {
+            $this->delete($reply);
+        }
+    }
     public function delete(Comment $comment)
     {
         $this->_em->remove($comment);
@@ -48,10 +55,39 @@ class CommentRepository extends ServiceEntityRepository
             ->getResult();
     }
 
-    public function findReplies()
+    public function findRepliesByRecipe(Recipe $recipe)
     {
         return $this->createQueryBuilder('c')
             ->andWhere('c.replyTo != -1')
+            ->andWhere('c.recipe = :recipe')
+            ->setParameter('recipe', $recipe)
+            ->orderBy('c.replyTo', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
+
+    public function findAllComments()
+    {
+        return $this->createQueryBuilder('c')
+            ->andWhere('c.replyTo = -1')
+            ->getQuery()
+            ->getResult();
+    }
+
+    public function findAllReplies()
+    {
+        return $this->createQueryBuilder('c')
+            ->andWhere('c.replyTo != -1')
+            ->orderBy('c.replyTo', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
+
+    public function findRepliesOf(int $id)
+    {
+        return $this->createQueryBuilder('c')
+            ->andWhere('c.replyTo = :replyTo')
+            ->setParameter(':replyTo', $id)
             ->orderBy('c.replyTo', 'ASC')
             ->getQuery()
             ->getResult();

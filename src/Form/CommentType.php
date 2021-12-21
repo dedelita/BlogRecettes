@@ -17,7 +17,7 @@ class CommentType extends AbstractType
     {
         $builder
             ->add('writer', TextType::class, [
-                'label' => 'Votre nom ou pseudo',
+                'label' => 'Votre nom ou pseudo *',
                 'label_attr' => [
                     'class' => 'col-form-label'
                 ],
@@ -26,9 +26,13 @@ class CommentType extends AbstractType
                 ]
             ])
             ->add('email', EmailType::class, [
-                'label' => 'Votre email',
+                'label' => 'Votre email *',
+                'help' => 'Ne sera pas affiché',
                 'label_attr' => [
-                    'class' => 'col-form-label'
+                    'class' => 'col-form-label p-0'
+                ],
+                'help_attr' => [
+                    'class' => 'mt-0 fst-italic'
                 ],
                 'attr' => [
                     'class' => 'mb-1'
@@ -38,17 +42,17 @@ class CommentType extends AbstractType
                 'label' => false,
                 'attr' => [
                     'placeholder' => 'Entrez votre commentaire.',
-                    'row' => 5
+                    'rows' => 5
                 ]
             ])
             ->add('stars', HiddenType::class, [
+                'required' => true,
                 'attr' => [
                     'class' => 'rating-input',
                     'min' => 0,
                     'max' => 5
                 ]
             ])
-            ->add('replyTo', HiddenType::class)
         ;
     }
 
@@ -56,6 +60,7 @@ class CommentType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => Comment::class,
+            'attr' => ['id' => 'addComment']
         ]);
     }
 }

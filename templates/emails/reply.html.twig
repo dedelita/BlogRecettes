@@ -1,0 +1,11 @@
+<html>
+    <body>
+        <p>Bonjour {{ comment.writer | capitalize }},</p>
+        <p>{{ reply.writer | capitalize }} a répondu à votre commentaire.</p>
+
+        <h4>Votre commentaire</h4>
+        <span>{{ comment.content | capitalize }}</span>
+        <h4>Sa réponse, le {{ reply.createdDate | date("d/m/Y") }}</h4>
+        <span>{{ reply.content | capitalize }}</span>
+    </body>
+</html>

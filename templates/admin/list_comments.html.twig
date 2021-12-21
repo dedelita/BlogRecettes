@@ -12,11 +12,12 @@
     </div>
     <hr>
 {% for comment in comments %}
+{% macro print_admin_comments_recursively(comment, loop, id) %}
     {{ render(path('admin_edit_comment', {id: comment.id})) }}
     {{ render(path('admin_reply_to_comment', {id: comment.id})) }}
     {% include "modals/delete_comment.html.twig" with {id: comment.id, text: comment.id} %}
     <div class="row list {% if not loop.first %}mt-2{% endif %} text-center">
-        <div class="col-2 ps-2 text-start">{{ comment.writer }}</div>
+        <div class="col-2 ps-2 text-start">{{ comment.writer | capitalize }}</div>
         <div class="col-5 text-start">{{ comment.content | capitalize }}</div>
         <div class="col-1">{{ comment.stars }}</div>
         <div class="col-1">{{ comment.recipe.id }}</div>
@@ -36,6 +37,15 @@
             </a>
         </div>
     </div>
+    {% for reply in comment.replies %}
+    <div class="ps-1">
+        {% set id = id + 1 %}
+        {{ _self.print_admin_comments_recursively(reply, loop, id) }}
+    </div>
+    {% endfor %}
+    {% endmacro %}
+    {{ _self.print_admin_comments_recursively(comment, loop, 0) }}
 {% endfor %}
 </div>
 {% endblock %}
+
