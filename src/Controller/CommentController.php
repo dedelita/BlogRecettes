@@ -22,7 +22,7 @@ class CommentController extends AbstractController
     /**
      * @Route("reply_to_comment/{id}", name="reply_to_comment")
      */
-    public function replyToComment(Request $request, CommentRepository $commentRepository)
+    public function replyToComment(Request $request, CommentRepository $commentRepository, MailerInterface $mailer)
     {
         $username = $request->cookies->get("username");
         $email = $request->cookies->get("email");
@@ -46,6 +46,8 @@ class CommentController extends AbstractController
             $response->headers->setCookie($cookie);
             $response->sendHeaders();
             $commentRepository->add($comment);
+
+            $this->sendEmail($mailer, $reply_to, $comment);
             return $this->redirectToRoute('recipe', ["id" => $reply_to->getRecipe()->getId()]);
         }   
 
